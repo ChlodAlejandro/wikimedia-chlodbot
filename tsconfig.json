@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+        "allowJs": false,
+        "target": "es6",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "inlineSources": true,
+        "sourceMap": true,
+        "resolveJsonModule": true
+    },
+    "include": [
+        "./src/**/*",
+        ".package.json"
+    ],
+    "exclude": [
+        "./node_modules/**/*"
+    ]
+}

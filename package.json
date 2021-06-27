@@ -1,0 +1,38 @@
+{
+    "name": "wikimedia-chlodbot",
+    "version": "1.0.0",
+    "description": "Wikipedia bot.",
+    "scripts": {
+        "wptc-index": "node --require ts-node/register src/one-off/WPTCIndex.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ChlodAlejandro/wikimedia-chlodbot.git"
+    },
+    "keywords": [
+        "wikimedia",
+        "wikipedia",
+        "bot"
+    ],
+    "author": "Chlod Alejandro <chlod@chlod.net>",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/ChlodAlejandro/wikimedia-chlodbot/issues"
+    },
+    "homepage": "https://github.com/ChlodAlejandro/wikimedia-chlodbot#readme",
+    "devDependencies": {
+        "@types/node": "^14.14.41",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.24.0",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-jsdoc": "^32.3.1",
+        "jest": "^26.6.3",
+        "ts-jest": "^26.5.5",
+        "ts-node": "^9.1.1",
+        "typescript": "^4.2.4"
+    },
+    "dependencies": {
+        "mwn": "^0.11.0"
+    }
+}
