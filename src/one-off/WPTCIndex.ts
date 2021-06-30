@@ -97,11 +97,11 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     const classC = new Set<string>();
 
     const searchTargets = [
-        "intitle:/cyclone/",
-        "intitle:/typhoon/",
-        "intitle:/hurricane/",
-        "intitle:/tropical storm/",
-        "intitle:/(tropical|deep) depression/",
+        "intitle:/cyclone/i",
+        "intitle:/typhoon/i",
+        "intitle:/hurricane/i",
+        "intitle:/tropical storm/i",
+        "intitle:/(tropical|deep) depression/i",
     ];
 
     for (const searchTarget of searchTargets) {
