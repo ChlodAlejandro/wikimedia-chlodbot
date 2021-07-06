@@ -77,7 +77,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     for await (const res of bot.continuedQueryGen({
         action: "query",
         generator: "search",
-        gsrsearch: "insource:/wikiproject weather[^}]*?\|\s*tropical-cyclones-project\s*=\s*yes/i",
+        gsrsearch: "insource:/wikiproject weather[^}]*?\|\s*tropical-cyclones-project\s*=\s*[^}|]+?/i",
         gsrlimit: 500
     })) {
         pushPages(classA, res);
