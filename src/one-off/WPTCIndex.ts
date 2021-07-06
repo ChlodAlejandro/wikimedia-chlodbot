@@ -12,7 +12,6 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     const bot = await mwn.init({
         apiUrl: "https://en.wikipedia.org/w/api.php",
 
-        // TODO: ENVIRONMENT VARIABLES
         username: process.env.ENWIKI_USERNAME,
         password: process.env.ENWIKI_PASSWORD,
 
@@ -31,7 +30,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     // Enable emergency shutoff
     bot.enableEmergencyShutoff({
         page: "User:ChlodBot/WPTC Indexer/shutdown",
-        intervalDuration: 5000,
+        intervalDuration: 1000,
         condition: function (pagetext) {
             return pagetext === "false";
         },
@@ -64,11 +63,22 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     console.log("Performing class A search...");
     const classA = new Set<string>();
 
+    console.log(":: {{WikiProject Tropical cyclones}}");
     for await (const res of bot.continuedQueryGen({
         action: "query",
         generator: "embeddedin",
         geititle: "Template:WikiProject Tropical cyclones",
         geilimit: 500
+    })) {
+        pushPages(classA, res);
+    }
+    
+    console.log(":: {{WikiProject Weather}}");
+    for await (const res of bot.continuedQueryGen({
+        action: "query",
+        generator: "search",
+        gsrsearch: "insource:/wikiproject weather[^}]*?\|\s*tropical-cyclones-project\s*=\s*yes/i",
+        gsrlimit: 500
     })) {
         pushPages(classA, res);
     }
