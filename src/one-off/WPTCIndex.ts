@@ -63,24 +63,24 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     console.log("Performing class A search...");
     const classA = new Set<string>();
 
-    console.log(":: {{WikiProject Tropical cyclones}}");
-    for await (const res of bot.continuedQueryGen({
-        action: "query",
-        generator: "embeddedin",
-        geititle: "Template:WikiProject Tropical cyclones",
-        geilimit: 500
-    })) {
-        pushPages(classA, res);
-    }
-    
-    console.log(":: {{WikiProject Weather}}");
-    for await (const res of bot.continuedQueryGen({
-        action: "query",
-        generator: "search",
-        gsrsearch: "insource:/wikiproject weather[^}]*?\|\s*tropical-cyclones-project\s*=\s*[^}|]+?/i",
-        gsrlimit: 500
-    })) {
-        pushPages(classA, res);
+    const tcCategories = [
+        "Category:Top-importance Tropical cyclone articles",
+        "Category:High-importance Tropical cyclone articles",
+        "Category:Mid-importance Tropical cyclone articles",
+        "Category:Low-importance Tropical cyclone articles",
+        "Category:NA-importance Tropical cyclone articles",
+        "Category:Unknown-importance Tropical cyclone articles"
+    ];
+    for (const category of tcCategories) {
+        console.log(category);
+        for await (const res of bot.continuedQueryGen({
+            action: "query",
+            generator: "categorymembers",
+            gcmtitle: category,
+            geilimit: 500
+        })) {
+            pushPages(classA, res);
+        }
     }
 
     // ########################################################################
