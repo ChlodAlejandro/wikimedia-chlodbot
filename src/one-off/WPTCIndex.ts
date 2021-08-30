@@ -23,8 +23,10 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
             process.version.replace(/^v/, "")
         }`,
         defaultParams: {
-            assert: "user"
-        }
+            assert: "user",
+            maxlag: 60
+        },
+        silent: true
     });
 
     // Enable emergency shutoff
