@@ -79,7 +79,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
             action: "query",
             generator: "categorymembers",
             gcmtitle: category,
-            geilimit: 500
+            gcmlimit: 500
         })) {
             pushPages(classA, res);
         }
