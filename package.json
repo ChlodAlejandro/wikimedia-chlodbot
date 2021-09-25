@@ -1,5 +1,5 @@
 {
-    "name": "wikimedia-chlodbot",
+    "name": "wikimedia-zoomiebot",
     "version": "1.0.0",
     "description": "Wikipedia bot.",
     "scripts": {
@@ -7,7 +7,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ChlodAlejandro/wikimedia-chlodbot.git"
+        "url": "git+https://github.com/ChlodAlejandro/wikimedia-zoomiebot.git"
     },
     "keywords": [
         "wikimedia",
@@ -17,9 +17,9 @@
     "author": "Chlod Alejandro <chlod@chlod.net>",
     "license": "Apache-2.0",
     "bugs": {
-        "url": "https://github.com/ChlodAlejandro/wikimedia-chlodbot/issues"
+        "url": "https://github.com/ChlodAlejandro/wikimedia-zoomiebot/issues"
     },
-    "homepage": "https://github.com/ChlodAlejandro/wikimedia-chlodbot#readme",
+    "homepage": "https://github.com/ChlodAlejandro/wikimedia-zoomiebot#readme",
     "devDependencies": {
         "@types/node": "^14.14.41",
         "@typescript-eslint/eslint-plugin": "^4.22.0",

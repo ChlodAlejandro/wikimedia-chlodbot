@@ -15,7 +15,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
         username: process.env.ENWIKI_USERNAME,
         password: process.env.ENWIKI_PASSWORD,
 
-        userAgent: `ChlodBot ${
+        userAgent: `Zoomiebot ${
             VERSION
         } (https://w.wiki/3Yti; chlod@chlod.net; User:Chlod) mwn/${
             project.dependencies.mwn.replace(/^\^/, "")
@@ -31,7 +31,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
 
     // Enable emergency shutoff
     bot.enableEmergencyShutoff({
-        page: "User:ChlodBot/WPTC Indexer/shutdown",
+        page: "User:Zoomiebot/WPTC Indexer/shutdown",
         intervalDuration: 1000,
         condition: function (pagetext) {
             return pagetext === "false";
@@ -143,9 +143,9 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
 
     for (const [name, set] of Object.entries(sets)) {
         await bot.save(
-            `User:ChlodBot/WPTC Indexer/${name}`,
+            `User:Zoomiebot/WPTC Indexer/${name}`,
             [...set].map(p => `* {{la2|${p}}}`).join("\n"),
-            `(bot) Updating [[User:ChlodBot/WPTC Indexer|WikiProject Tropical cyclones]] page indexes ([[User:ChlodBot/WPTC Indexer#${name}|${name}]])`
+            `(bot) Updating [[User:Zoomiebot/WPTC Indexer|WikiProject Tropical cyclones]] page indexes ([[User:Zoomiebot/WPTC Indexer#${name}|${name}]])`
         );
     }
 
