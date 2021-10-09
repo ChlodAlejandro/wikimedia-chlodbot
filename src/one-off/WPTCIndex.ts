@@ -1,68 +1,29 @@
-import { ApiResponse, mwn } from "mwn";
-import { VERSION } from "../constants/Constants";
-import project from "../../package.json";
-
-if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
-    console.error("missing username or password");
-    process.exit();
-}
+import { ApiResponse } from "mwn";
+import OneOffTask from "./OneOffTask";
 
 (async () => {
-    // API connection
-    const bot = await mwn.init({
-        apiUrl: "https://en.wikipedia.org/w/api.php",
-
-        username: process.env.ENWIKI_USERNAME,
-        password: process.env.ENWIKI_PASSWORD,
-
-        userAgent: `Zoomiebot ${
-            VERSION
-        } (https://w.wiki/3Yti; chlod@chlod.net; User:Chlod) mwn/${
-            project.dependencies.mwn.replace(/^\^/, "")
-        } node/${
-            process.version.replace(/^v/, "")
-        }`,
-        defaultParams: {
-            assert: "user",
-            maxlag: 60
-        },
-        silent: true
-    });
-
-    // Enable emergency shutoff
-    bot.enableEmergencyShutoff({
-        page: "User:Zoomiebot/WPTC Indexer/shutdown",
-        intervalDuration: 1000,
-        condition: function (pagetext) {
-            return pagetext === "false";
-        },
-        onShutoff: function () {
-            console.log("Shutting down!!!");
-            process.exit();
-        }
-    });
+    const { log, bot } = await OneOffTask.create("WPTC Indexer");
 
     /**
      * Pushes pages (converted into their subject page, if the given page was
      * a talk page) into a given array.
-     * 
+     *
      * @param array The array to push into.
-     * @param query The API response.
+     * @param res The API response.
      */
     function pushPages(array : Set<string>, res : ApiResponse) {
         Object.values(res?.query?.pages ?? []).forEach(pageObject => {
             const page = new bot.title((pageObject as Record<string, any>).title);
-            const title = page.isTalkPage() ? 
+            const title = page.isTalkPage() ?
                 page.getSubjectPage().getPrefixedText() : page.getPrefixedText();
             array.add(title);
-            // console.log(`:: pushed ${title}`);
         });
     }
     // ########################################################################
     // Class A: WikiProject template banner transclusions
     // ########################################################################
 
-    console.log("Performing class A search...");
+    log.info("Performing class A search...");
     const classA = new Set<string>();
 
     const tcCategories = [
@@ -74,7 +35,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
         "Category:Unknown-importance Tropical cyclone articles"
     ];
     for (const category of tcCategories) {
-        console.log(category);
+        log.debug(`Processing "${category}"...`);
         for await (const res of bot.continuedQueryGen({
             action: "query",
             generator: "categorymembers",
@@ -84,12 +45,13 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
             pushPages(classA, res);
         }
     }
+    log.info(`Found ${classA.size} Class-A articles.`);
 
     // ########################################################################
     // Class B: WikiProject sub-articles
     // ########################################################################
 
-    console.log("Performing class B search...");
+    log.info("Performing class B search...");
     const classB = new Set<string>();
 
     for await (const res of bot.continuedQueryGen({
@@ -100,12 +62,13 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     })) {
         pushPages(classB, res);
     }
+    log.info(`Found ${classB.size} Class-B articles.`);
 
     // ########################################################################
     // Class C: Typhoon-related drafts
     // ########################################################################
 
-    console.log("Performing class C search...");
+    log.info("Performing class C search...");
     const classC = new Set<string>();
 
     const searchTargets = [
@@ -117,7 +80,7 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
     ];
 
     for (const searchTarget of searchTargets) {
-        console.log(`:: ${searchTarget}`);
+        log.debug(`Processing query: "${searchTarget}"`);
         for await (const res of bot.continuedQueryGen({
             action: "query",
             generator: "search",
@@ -128,12 +91,13 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
             pushPages(classC, res);
         }
     }
+    log.info(`Found ${classC.size} Class-C articles.`);
 
     // ########################################################################
     // Dump to file / save to Wikipedia
     // ########################################################################
 
-    console.log("Dumping...");
+    log.info("Dumping...");
 
     const sets = {
         "Class A": classA,
@@ -149,6 +113,6 @@ if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
         );
     }
 
-    console.log("Done.");
-    bot.disableEmergencyShutoff();
+    log.info("Done.");
+    await OneOffTask.destroy(log, bot);
 })();
