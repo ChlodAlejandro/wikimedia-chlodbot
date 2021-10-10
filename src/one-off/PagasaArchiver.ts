@@ -132,8 +132,7 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
                     uploadedFiles++;
                     log.info(`Uploaded new file: ${filename}`);
                 } catch (e) {
-                    log.error(`Failed to download and archive bulletin: ${e.message}`);
-                    log.error(e);
+                    log.error(`Failed to download and archive bulletin: ${e.message}`, e);
                 }
             }
         }
@@ -271,9 +270,11 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
                     wikitext,
                     "Updating archives (bot)"
                 );
+                await bot.purge("User:Zoomiebot/Archives/PAGASA").catch((e) => {
+                    log.warn("Failed to purge.", e);
+                });
             } catch (e) {
-                log.error("Failed to save to Wikipedia.");
-                log.error(e);
+                log.error("Failed to save to Wikipedia.", e);
                 if (e.response) {
                     log.debug(e.response.data);
                 }
