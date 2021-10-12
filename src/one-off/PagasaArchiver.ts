@@ -60,6 +60,8 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
     };
 }
 
+const READ_ONLY = true;
+
 (async () => {
     const { log, bot } = await OneOffTask.create("PAGASA Archiver");
 
@@ -76,6 +78,13 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
     const stormTCBs : Record<string, PAGASADocument[]> = {};
     for (const tcb of TCBs) {
         const stormNumber = findCycloneNumber(tcb.name);
+
+        if (stormNumber[1] === 0) {
+            log.debug(`Detected storm does not have a valid name (${
+                tcb.name
+            }). Skipping...`);
+        }
+
         const stormIdentifier = `pagasa-${stormNumber[0].toString().substr(2)}-TC${stormNumber[1]}`;
 
         if (stormTCBs[stormIdentifier] == null) {
@@ -116,19 +125,20 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
                 try {
                     const downloaded =
                         await PagasaScraper.downloadTCB(tcb.file, {responseType: "arraybuffer"});
-                    await iajs.S3API.upload({
-                        identifier,
-                        key: encodeURIComponent(filename),
-                        body: downloaded.data,
-                        autocreate: true,
-                        wait: true,
-                        keepOldVersions: false,
-                        metadata: generateMetadata(tcb),
-                        headers: {
-                            "x-archive-interactive-priority": 1
-                        },
-                        auth
-                    });
+                    if (!READ_ONLY)
+                        await iajs.S3API.upload({
+                            identifier,
+                            key: encodeURIComponent(filename),
+                            body: downloaded.data,
+                            autocreate: true,
+                            wait: true,
+                            keepOldVersions: false,
+                            metadata: generateMetadata(tcb),
+                            headers: {
+                                "x-archive-interactive-priority": 1
+                            },
+                            auth
+                        });
                     uploadedFiles++;
                     log.info(`Uploaded new file: ${filename}`);
                 } catch (e) {
@@ -265,14 +275,16 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
                 )).data;
 
                 log.debug("Saving to page...");
-                await bot.save(
-                    `User:Zoomiebot/Archives/PAGASA/${year}`,
-                    wikitext,
-                    "Updating archives (bot)"
-                );
-                await bot.purge("User:Zoomiebot/Archives/PAGASA").catch((e) => {
-                    log.warn("Failed to purge.", e);
-                });
+                if (!READ_ONLY) {
+                    await bot.save(
+                        `User:Zoomiebot/Archives/PAGASA/${year}`,
+                        wikitext,
+                        "Updating archives (bot)"
+                    );
+                    await bot.purge("User:Zoomiebot/Archives/PAGASA").catch((e) => {
+                        log.warn("Failed to purge.", e);
+                    });
+                }
             } catch (e) {
                 log.error("Failed to save to Wikipedia.", e);
                 if (e.response) {

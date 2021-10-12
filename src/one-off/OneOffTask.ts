@@ -26,32 +26,47 @@ export default class OneOffTask {
             process.exit();
         }
 
-        // API connection
-        const bot = await mwn.init({
-            apiUrl: "https://en.wikipedia.org/w/api.php",
+        let bot;
+        await Promise.race([
+            new Promise<void>(async (res, rej) => {
+                // API connection
+                bot = await mwn.init({
+                    apiUrl: "https://en.wikipedia.org/w/api.php",
 
-            username: process.env.ENWIKI_USERNAME,
-            password: process.env.ENWIKI_PASSWORD,
+                    username: process.env.ENWIKI_USERNAME,
+                    password: process.env.ENWIKI_PASSWORD,
 
-            userAgent: USER_AGENT,
-            defaultParams: {
-                assert: "user",
-                maxlag: 60
-            },
-            silent: true
-        });
+                    userAgent: USER_AGENT,
+                    defaultParams: {
+                        assert: "user",
+                        maxlag: 60
+                    },
+                    silent: true
+                }).catch(rej);
 
-        // Enable emergency shutoff
-        bot.enableEmergencyShutoff({
-            page: `User:Zoomiebot/${taskName}/shutdown`,
-            intervalDuration: 1000,
-            condition: function (text) {
-                return text === "false";
-            },
-            onShutoff: function () {
-                log.fatal("Shutdown activated! Exiting!!!");
-                process.exit();
-            }
+                // Enable emergency shutoff
+                bot.enableEmergencyShutoff({
+                    page: `User:Zoomiebot/${taskName}/shutdown`,
+                    intervalDuration: 1000,
+                    condition: function (text) {
+                        return text === "false";
+                    },
+                    onShutoff: function () {
+                        log.fatal("Shutdown activated! Exiting!!!");
+                        process.exit();
+                    }
+                });
+                res();
+            }),
+            new Promise<void>(async (res, rej) => {
+                await new Promise((res) => {
+                    setTimeout(res, 30000);
+                });
+                rej(new Error("Failed to log in within 30 seconds."));
+            })
+        ]).catch((e) => {
+            log.fatal("Could not log in.", e);
+            process.exit();
         });
 
         log.info("Logged in. Ready to perform one-off task.");
