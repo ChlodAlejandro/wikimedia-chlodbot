@@ -49,7 +49,7 @@ import iswitch from "../util/iswitch";
     log.info(`Query finished. Took ${Number(end - start) / 1000000}ms.`);
 
     let wikitext = nd(`
-        This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}. Generated ~~~~~.
+        This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}.
         
         {| class="wikitable sortable"
         ! rowspan=2 | ID
