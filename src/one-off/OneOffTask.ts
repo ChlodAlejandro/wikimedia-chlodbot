@@ -71,6 +71,12 @@ export default class OneOffTask {
 
         log.info("Logged in. Ready to perform one-off task.");
 
+        setTimeout(() => {
+            log.warn("One-off task still has not completed. Something must have gone wrong.");
+            log.warn("Triggering emergency destruction. Data might be lost!");
+            this.destroy(log, bot);
+        }, 3600000);
+
         return { log, bot };
     }
 
