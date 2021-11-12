@@ -46,6 +46,8 @@ import iswitch from "../util/iswitch";
     `);
     const end = process.hrtime.bigint();
     log.info(`Query finished. Took ${Number(end - start) / 1000000}ms.`);
+    log.info("Closing SQL connection...");
+    await sql.end();
 
     let wikitext = nd(`
         This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}.
