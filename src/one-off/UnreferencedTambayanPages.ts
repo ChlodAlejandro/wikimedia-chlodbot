@@ -14,7 +14,6 @@ import iswitch from "../util/iswitch";
     const start = process.hrtime.bigint();
     const [ rows ] = await sql.query<RowDataPacket[]>(`
         SELECT
-            \`page_id\` AS \`id\`,
             REPLACE(\`page_title\`, "_", " ") AS \`title\`,
             DATE_FORMAT(\`rev_timestamp\`, "%Y-%m-%d %H:%i:%s") AS \`last_timestamp\`,
             \`actor_name\` AS \`last_editor\`,
@@ -52,24 +51,22 @@ import iswitch from "../util/iswitch";
         This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}.
         
         {| class="wikitable sortable"
-        ! rowspan=2 | ID
         ! rowspan=2 | Page
         ! colspan=2 | Last edit
-        ! rowspan=2 | Length
-        ! rowspan=2 | Importance
+        ! rowspan=2 data-sort-type="number" | Length
+        ! rowspan=2 data-sort-type="number" | Importance
         |-
-        ! Timestamp
+        ! data-sort-type="date" | Timestamp
         ! User
         |-
     `) + "\n";
     for (const row of rows) {
         wikitext += nd(`
-            | ${row["id"]}
             | {{la3|${row["title"]}}}
             | ${row["last_timestamp"]}
-            | {{noping|${row["last_editor"]}}}
-            | ${+(row["len"]).toLocaleString()}
-            | {{nts|${row["importance"]}}} ${
+            | {{u|${row["last_editor"]}}}
+            | {{nts|${row["len"]}}}
+            | {{nts|${row["importance"]}|quiet=y}} ${
                 iswitch(row["importance"], {
                     1: "Low",
                     2: "Mid",
