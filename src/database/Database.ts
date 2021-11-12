@@ -3,6 +3,7 @@ import ini from "ini";
 import * as fs from "fs";
 import path from "path";
 import Logger from "bunyan";
+import * as os from "os";
 
 interface SQLConfiguration {
     client: {
@@ -38,10 +39,11 @@ export default async function createConnection(
     analytics = true
 ) : Promise<mysql.Connection> {
     log.debug("Parsing configuration file...");
+    const HOME = os.homedir();
     const configRaw = (
         (process.env.SQL_CONFIG ? await tryRead(path.resolve(process.env.SQL_CONFIG)) : null)
-        ?? await tryRead(path.resolve("~", "replica.my.cnf"))
-        ?? await tryRead(path.resolve("~", ".my.cnf"))
+        ?? await tryRead(path.resolve(HOME, "replica.my.cnf"))
+        ?? await tryRead(path.resolve(HOME, ".my.cnf"))
     ).toString();
     const configParsed = ini.parse(configRaw) as SQLConfiguration;
 
