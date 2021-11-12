@@ -3,6 +3,8 @@ import createConnection from "../database/Database";
 import {RowDataPacket} from "mysql2";
 import nd from "../util/nd";
 import iswitch from "../util/iswitch";
+import * as path from "path";
+import * as fs from "fs/promises";
 
 (async () => {
     const { log, bot } = await OneOffTask.create("Unreferenced Tambayan Philippines pages");
@@ -12,38 +14,10 @@ import iswitch from "../util/iswitch";
 
     log.info("Performing query...");
     const start = process.hrtime.bigint();
-    const [ rows ] = await sql.query<RowDataPacket[]>(`
-        SELECT
-            REPLACE(\`page_title\`, "_", " ") AS \`title\`,
-            DATE_FORMAT(\`rev_timestamp\`, "%Y-%m-%d %H:%i:%s") AS \`last_timestamp\`,
-            \`actor_name\` AS \`last_editor\`,
-            \`page_len\` AS \`len\`,
-            (CASE \`cl_to\`
-                WHEN "Unknown-importance_Philippine-related_articles" THEN 0
-                WHEN "Low-importance_Philippine-related_articles" THEN 1
-                WHEN "Mid-importance_Philippine-related_articles" THEN 2
-                WHEN "High-importance_Philippine-related_articles" THEN 3
-                WHEN "Top-importance_Philippine-related_articles" THEN 4
-            END) AS \`importance\`
-        FROM \`categorylinks\` c1
-        JOIN \`page\` p1 ON \`cl_from\` = \`page_id\`
-        JOIN \`revision\` ON \`page_latest\` = \`rev_id\`
-        JOIN \`actor\` ON \`rev_actor\` = \`actor_id\`
-        WHERE
-            (\`cl_to\` = "Top-importance_Philippine-related_articles" OR
-            \`cl_to\` = "High-importance_Philippine-related_articles" OR
-            \`cl_to\` = "Mid-importance_Philippine-related_articles" OR
-            \`cl_to\` = "Low-importance_Philippine-related_articles" OR
-            \`cl_to\` = "Unknown-importance_Philippine-related_articles") AND
-            (SELECT TRUE FROM \`page\` p2
-            JOIN \`categorylinks\` c2 ON p2.\`page_id\` = c2.\`cl_from\`
-            WHERE
-                p2.\`page_namespace\` = 0 AND
-                p2.\`page_title\` = p1.\`page_title\` AND
-                c2.\`cl_to\` = "All_articles_lacking_sources"
-            HAVING COUNT(p2.\`page_id\`))
-        ORDER BY \`Importance\` DESC
-    `);
+    const [ rows ] = await sql.query<RowDataPacket[]>(
+        await fs.readFile(path.resolve(__dirname, "sql", "UnreferencedTambayanPages.sql"))
+            .then(f => f.toString())
+    );
     const end = process.hrtime.bigint();
     log.info(`Query finished. Took ${Number(end - start) / 1000000}ms.`);
     log.info("Closing SQL connection...");
@@ -64,10 +38,10 @@ import iswitch from "../util/iswitch";
     `) + "\n";
     for (const row of rows) {
         wikitext += nd(`
-            | {{la3|${row["title"]}}}
-            | ${row["last_timestamp"]}
-            | {{u|${row["last_editor"]}}}
-            | {{nts|${row["len"]}}}
+            | {{la3|${row["page_title"]}}}
+            | ${row["s_last_edit"]}
+            | {{u|${row["s_last_editor"]}}}
+            | {{nts|${row["s_length"]}}}
             | {{nts|${row["importance"]}|quiet=y}} ${
                 iswitch(row["importance"], {
                     1: "Low",
