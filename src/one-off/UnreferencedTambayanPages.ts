@@ -44,7 +44,7 @@ import iswitch from "../util/iswitch";
     `);
 
     let wikitext = nd(`
-        This page lists all [[Wikipedia:Tambayan Pilipinas]] pages that are tagged with {{T|Unreferenced}}. Generated on ~~~~~.
+        This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}. Generated on ~~~~~.
         
         {| class="wikitable sortable"
         ! rowspan=2 | Page ID
@@ -85,7 +85,7 @@ import iswitch from "../util/iswitch";
     log.info("Dumping...");
 
     await bot.save(
-        `User:Zoomiebot/Unsourced Tambayan Pilipinas pages/${name}`,
+        "User:Zoomiebot/Unreferenced Tambayan Philippines pages",
         wikitext,
         "(bot) Updating page list."
     );
