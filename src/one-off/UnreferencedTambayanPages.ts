@@ -39,8 +39,8 @@ import * as fs from "fs/promises";
     for (const row of rows) {
         wikitext += nd(`
             | {{la3|${row["page_title"]}}}
-            | ${row["s_last_edit"]}
-            | {{u|${row["s_last_editor"]}}}
+            | [[Special:Diff/${row["s_last_id"]}|${row["s_last_time"]}]]
+            | {{user|${row["s_last_actor"]}}}
             | {{nts|${row["s_length"]}}}
             | {{nts|${row["importance"]}|quiet=y}} ${
                 iswitch(row["importance"], {

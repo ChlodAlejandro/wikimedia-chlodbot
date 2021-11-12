@@ -1,7 +1,8 @@
 SELECT
     REPLACE(p1.`page_title`, "_", " ") AS `page_title`,
-    DATE_FORMAT(`rev_timestamp`, "%Y-%m-%d %H:%i:%s") AS `s_last_edit`,
-    `actor_name` AS `s_last_editor`,
+    `rev_id` AS `s_last_id`,
+    DATE_FORMAT(`rev_timestamp`, "%Y-%m-%d %H:%i:%s") AS `s_last_time`,
+    `actor_name` AS `s_last_actor`,
     `page_len` AS `s_length`,
     (CASE `t_importance`
          WHEN "Unknown-importance_Philippine-related_articles" THEN 1
