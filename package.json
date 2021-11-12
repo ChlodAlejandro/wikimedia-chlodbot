@@ -4,7 +4,8 @@
     "description": "Wikipedia bot.",
     "scripts": {
         "wptc-index": "node -r ts-node/register src/one-off/WPTCIndex.ts",
-        "pagasa-archiver": "node -r ts-node/register src/one-off/PagasaArchiver.ts"
+        "pagasa-archiver": "node -r ts-node/register src/one-off/PagasaArchiver.ts",
+        "unreferenced-tambayan-pages": "node -r ts-node/register src/one-off/UnreferencedTambayanPages.ts"
     },
     "repository": {
         "type": "git",
