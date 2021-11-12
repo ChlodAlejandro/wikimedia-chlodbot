@@ -58,7 +58,7 @@ import iswitch from "../util/iswitch";
         ! rowspan=2 data-sort-type="number" | Length
         ! rowspan=2 data-sort-type="number" | Importance
         |-
-        ! data-sort-type="date" | Timestamp
+        ! Timestamp
         ! User
         |-
     `) + "\n";
