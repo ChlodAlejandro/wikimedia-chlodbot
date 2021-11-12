@@ -9,6 +9,9 @@ import iswitch from "../util/iswitch";
 
     log.info("Connecting to `enwiki_p`...");
     const sql = await createConnection(log, "enwiki");
+
+    log.info("Performing query...");
+    const start = process.hrtime.bigint();
     const [ rows ] = await sql.query<RowDataPacket[]>(`
         SELECT
             \`page_id\` AS \`id\`,
@@ -42,12 +45,14 @@ import iswitch from "../util/iswitch";
             HAVING COUNT(p2.\`page_id\`))
         ORDER BY \`Importance\` DESC
     `);
+    const end = process.hrtime.bigint();
+    log.info(`Query finished. Took ${Number(end - start) / 1000000}ms.`);
 
     let wikitext = nd(`
-        This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}. Generated on ~~~~~.
+        This page lists all [[Wikipedia:Tambayan Philippines]] pages that are tagged with {{T|Unreferenced}}. Generated ~~~~~.
         
         {| class="wikitable sortable"
-        ! rowspan=2 | Page ID
+        ! rowspan=2 | ID
         ! rowspan=2 | Page
         ! colspan=2 | Last edit
         ! rowspan=2 | Length
@@ -62,9 +67,9 @@ import iswitch from "../util/iswitch";
             | ${row["id"]}
             | {{la3|${row["title"]}}}
             | ${row["last_timestamp"]}
-            | {{u|${row["last_editor"]}}}
-            | ${row["len"]}
-            | {{nts|${row["importance"]}} ${
+            | {{noping|${row["last_editor"]}}}
+            | ${+(row["len"]).toLocaleString()}
+            | {{nts|${row["importance"]}}} ${
                 iswitch(row["importance"], {
                     1: "Low",
                     2: "Mid",
