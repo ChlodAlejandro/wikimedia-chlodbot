@@ -83,7 +83,7 @@ export default async function createConnection(
         }" on ${
             toolsDB ? "Tools DB" : "Wiki Replicas"
         }. Running version ${
-            (await connection.query("SELECT @@version Version"))[/* rows */ 0]["Version"]
+            (await connection.query("SELECT Version() AS Version"))[/* rows */ 0]["Version"]
         }`);
 
         return connection;
