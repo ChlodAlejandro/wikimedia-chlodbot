@@ -38,19 +38,6 @@
                 ]
             }
         ],
-        "indent": [
-            "error",
-            4,
-            {
-                "SwitchCase": 1,
-                "FunctionDeclaration": {
-                    "parameters": "off"
-                },
-                "FunctionExpression": {
-                    "parameters": "off"
-                }
-            }
-        ],
         "linebreak-style": [
             "error",
             "windows"
