@@ -39,7 +39,7 @@ export default async function createConnection(
 ) : Promise<mysql.Connection> {
     log.debug("Parsing configuration file...");
     const configRaw = (
-        await tryRead(path.resolve(process.env.SQL_CONFIG))
+        (process.env.SQL_CONFIG ? await tryRead(path.resolve(process.env.SQL_CONFIG)) : null)
         ?? await tryRead(path.resolve("~", "replica.my.cnf"))
         ?? await tryRead(path.resolve("~", ".my.cnf"))
     ).toString();

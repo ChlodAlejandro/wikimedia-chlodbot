@@ -5,7 +5,7 @@ import nd from "../util/nd";
 import iswitch from "../util/iswitch";
 
 (async () => {
-    const { log, bot } = await OneOffTask.create("Unsourced Tambayan Pilipinas pages");
+    const { log, bot } = await OneOffTask.create("Unreferenced Tambayan Philippines pages");
 
     log.info("Connecting to `enwiki_p`...");
     const sql = await createConnection(log, "enwiki");
