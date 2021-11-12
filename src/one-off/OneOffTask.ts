@@ -2,11 +2,15 @@ import Logger from "bunyan";
 import bunyanFormat from "bunyan-format";
 import {mwn} from "mwn";
 import {USER_AGENT} from "../constants/Constants";
+import Timeout = NodeJS.Timeout;
 
 /**
  * Manages the mwn instance for one-off tasks.
  */
 export default class OneOffTask {
+
+    /** Keeps track of emergency timeouts. */
+    static timeouts : Map<mwn, Timeout> = new Map<mwn, NodeJS.Timeout>();
 
     /**
      * Creates components for a one-off task.
@@ -71,11 +75,11 @@ export default class OneOffTask {
 
         log.info("Logged in. Ready to perform one-off task.");
 
-        setTimeout(() => {
+        this.timeouts.set(bot, setTimeout(() => {
             log.warn("One-off task still has not completed. Something must have gone wrong.");
             log.warn("Triggering emergency destruction. Data might be lost!");
             this.destroy(log, bot);
-        }, 3600000);
+        }, 3600000));
 
         return { log, bot };
     }
@@ -86,6 +90,7 @@ export default class OneOffTask {
      * @param bot The bot instance created by {@link OneOffTask.create()}
      */
     static async destroy(log : Logger, bot : mwn) : Promise<void> {
+        clearTimeout(this.timeouts.get(bot));
         bot.disableEmergencyShutoff();
         await bot.logout();
         log.info("Bot logged out. Exiting...");
