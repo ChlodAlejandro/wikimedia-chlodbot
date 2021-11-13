@@ -35,15 +35,16 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 		<?php body_header(); ?>
 		<main>
 			<nav class="navbar navbar-expand-l px-2" style="height: 56px;">
-				<div class="container-fluid align-items-start justify-content-start">
+				<div class="container-fluid align-items-center justify-content-start">
 					<span class="navbar-brand">Log viewer</span>
-					<div class="nav-item dropdown">
+					<div class="nav-item dropdown me-lg-auto">
 						<a class="nav-link dropdown-toggle" href="#" id="activeLog" role="button"
 						   data-bs-toggle="dropdown" aria-expanded="false">
 							Select a log file
 						</a>
 						<ul id="logList" class="dropdown-menu" aria-labelledby="activeLog"></ul>
 					</div>
+					<div>Logs go bottom to top.</div>
 				</div>
 			</nav>
 			<div id="log" class="container-fluid">
