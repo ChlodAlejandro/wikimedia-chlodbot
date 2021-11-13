@@ -44,7 +44,6 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 						</a>
 						<ul id="logList" class="dropdown-menu" aria-labelledby="activeLog"></ul>
 					</div>
-					<div>Logs go bottom to top.</div>
 				</div>
 			</nav>
 			<div id="log" class="container-fluid">
@@ -62,7 +61,9 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 					.then(r => r.text())
 					.then(t => (new (require("ansi-to-html"))).toHtml(t))
 					.then(t => {
-                        document.getElementById("log").innerHTML = t;
+                        const log = document.getElementById("log");
+                        log.innerHTML = t;
+                        log.scrollTop = log.scrollHeight;
 					})
 			}
 
