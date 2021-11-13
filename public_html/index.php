@@ -11,6 +11,10 @@ require_once(__DIR__ . "/interface/body_header.php");
 		<!-- Page CSS -->
 		<!--suppress CssUnusedSymbol -->
 		<style>
+			#tasks {
+				overflow-x: auto;
+			}
+
 			#tasks:not(.tasks-loaded) + .tasks-note {
 				display: none;
 			}
