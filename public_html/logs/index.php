@@ -21,6 +21,12 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 				white-space: pre;
 				font-family: monospace;
 				font-size: 0.8rem;
+
+                overflow-x: auto;
+				background-color: #111;
+				color: white;
+                width: 100%;
+				height: calc(100vh - (74px + 56px));
 			}
 		</style>
 		<script src="/scripts/auto/exports.js"></script>
@@ -28,7 +34,7 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 	<body>
 		<?php body_header(); ?>
 		<main>
-			<nav class="navbar navbar-expand-l px-2">
+			<nav class="navbar navbar-expand-l px-2" style="height: 56px;">
 				<div class="container-fluid align-items-start justify-content-start">
 					<span class="navbar-brand">Log viewer</span>
 					<div class="nav-item dropdown">

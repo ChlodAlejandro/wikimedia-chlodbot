@@ -1,7 +1,7 @@
 <?php
 function body_header(callable $postNav = null) {
 ?>
-	<header class="bg-dark p-3 border-bottom">
+	<header class="bg-dark p-3 border-bottom" style="height: 74px;">
 		<div class="container">
 			<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 				<img id="logo" src="/images/zoomiebot-face.svg" alt="Zoomiebot" class="me-3">
