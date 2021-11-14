@@ -33,4 +33,4 @@ JOIN (
 ) a ON `t_page_title` = `page_title`
 WHERE
     c1.`cl_to` = "All_articles_lacking_sources"
-ORDER BY `importance` DESC, `s_last_edit` DESC
+ORDER BY `importance` DESC, `s_last_time` DESC
