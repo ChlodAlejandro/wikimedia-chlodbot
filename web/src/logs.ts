@@ -3,12 +3,14 @@ declare global {
 }
 export {};
 
+let logFile = null;
 const logList = document.getElementById("logList");
 
 /**
  * Sets the active log file.
  */
 function setLogFile(file) {
+    logFile = file;
     document.getElementById("activeLog").innerText = file;
     fetch(`/api/logs/get.php?file=${encodeURIComponent(file)}`)
         .then(r => r.text())
@@ -49,3 +51,7 @@ refreshLogFiles();
 if (window.location.hash) {
     setLogFile(window.location.hash.slice(1));
 }
+
+document.getElementById("refresh").addEventListener("click", () => {
+    setLogFile(logFile);
+});
