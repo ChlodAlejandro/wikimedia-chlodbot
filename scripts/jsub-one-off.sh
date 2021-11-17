@@ -6,7 +6,7 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
     SCRIPT_PATH=$(dirname "$SCRIPT")
 
-export HOME=~
+export HOME=`getent passwd $USER | cut -d: -f6`
 /usr/bin/jsub \
     -N "$1" \
     -o "$HOME/logs/$1.out" \
