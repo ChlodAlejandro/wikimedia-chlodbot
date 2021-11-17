@@ -2,7 +2,7 @@
 set -e
 
 # Setup environment
-source "$HOME/.profile"
+. "$HOME/.profile"
 cd "$HOME/project/"
 
 # Run task
