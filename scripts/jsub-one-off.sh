@@ -6,15 +6,19 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPT_PATH=$(dirname "$SCRIPT")
 
-/usr/bin/jsub \
-    -N "$1" \
-    -o "$HOME/logs/$1.out" \
-    -e "$HOME/logs/$1.err" \
-    -quiet -once -mem 1024m \
-    "$SCRIPT_PATH/one-off.sh" "$1"
+start() {
+    /usr/bin/jsub \
+        -N "$1" \
+        -o "$HOME/logs/$1.out" \
+        -e "$HOME/logs/$1.err" \
+        -quiet -once -mem 1024m \
+        "$SCRIPT_PATH/one-off.sh" "$1"
+}
 
 if [ -t 1 ]; then
-    tail -fqn 0 "$HOME/logs/$1.out" "$HOME/logs/$1.err"
+    tail -fqn 0 "$HOME/logs/$1.out" "$HOME/logs/$1.err" & start
+else
+    start
 fi
 
 set +e

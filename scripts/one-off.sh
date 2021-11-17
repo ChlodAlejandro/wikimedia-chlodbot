@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-$HOME=~
+HOME=~
 
 # Setup environment
 source "$HOME/.profile"
