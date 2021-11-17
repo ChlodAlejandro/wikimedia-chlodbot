@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set +e
 
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f "$0")
@@ -15,3 +16,5 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
 if [ -t 1 ]; then
     tail -fq "$HOME/logs/$1.out" "$HOME/logs/$1.err"
 fi
+
+set -e
