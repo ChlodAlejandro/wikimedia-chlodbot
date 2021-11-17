@@ -14,7 +14,7 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
     "$SCRIPT_PATH/one-off.sh" "$1"
 
 if [ -t 1 ]; then
-    tail -fq "$HOME/logs/$1.out" "$HOME/logs/$1.err"
+    tail -fqn 0 "$HOME/logs/$1.out" "$HOME/logs/$1.err"
 fi
 
 set +e
