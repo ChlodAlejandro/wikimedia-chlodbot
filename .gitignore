@@ -3,3 +3,5 @@
 
 node_modules
 build
+web/public/scripts/auto
+web/public/logs/files

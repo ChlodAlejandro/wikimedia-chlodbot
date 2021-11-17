@@ -29,7 +29,10 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 				height: calc(100vh - (74px + 56px));
 			}
 		</style>
-		<script src="/scripts/auto/exports.js"></script>
+		<script src="/scripts/auto/logs.js"></script>
+		<script>
+			global.logFiles = <?php echo json_encode(get_log_files()) ?>;
+		</script>
 	</head>
 	<body>
 		<?php body_header(); ?>
@@ -50,36 +53,5 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 
 			</div>
 		</main>
-		<!--suppress JSUnusedAssignment -->
-		<script>
-			const logList = document.getElementById("logList");
-            logList.innerHTML = "";
-
-            function setLogFile(file) {
-                document.getElementById("activeLog").innerText = file;
-                fetch(`/api/logs/get.php?file=${encodeURIComponent(file)}`)
-					.then(r => r.text())
-					.then(t => (new (require("ansi-to-html"))).toHtml(t))
-					.then(t => {
-                        const log = document.getElementById("log");
-                        log.innerHTML = t;
-                        log.scrollTop = log.scrollHeight;
-					})
-			}
-
-            for (const log of <?php echo json_encode(get_log_files()) ?>) {
-                if (log == null) continue;
-
-                const li = document.createElement("li");
-                const li_a = document.createElement("li");
-                li_a.innerText = log;
-                li_a.classList.add("dropdown-item");
-                li_a.addEventListener("click", () => {
-                    setLogFile(log);
-				});
-                li.appendChild(li_a);
-                logList.appendChild(li);
-			}
-		</script>
 	</body>
 </html>

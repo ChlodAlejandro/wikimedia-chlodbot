@@ -3,3 +3,7 @@
     width: auto;
     pointer-events: none;
 }
+
+a:not(:active, :hover, :focus) {
+    text-decoration: none;
+}

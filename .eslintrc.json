@@ -53,9 +53,6 @@
         "no-unused-vars": [
             "warn"
         ],
-        "camelcase": [
-            "warn"
-        ],
         "prefer-const": [
             "error",
             {

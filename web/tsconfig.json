@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "rootDir": "./",
+        "outDir": "./build",
+        "allowJs": false,
+        "target": "ES6",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "inlineSources": true,
+        "sourceMap": true,
+        "resolveJsonModule": true
+    },
+    "include": [
+        "./**/*.ts"
+    ]
+}

@@ -15,6 +15,9 @@ function body_header(callable $postNav = null) {
 					<li>
 						<a class="nav-link px-2 text-white" href="/logs">Logs</a>
 					</li>
+					<li>
+						<a class="nav-link px-2 text-white" href="/utilities">Utilities</a>
+					</li>
 				</ul>
 				<?php if ($postNav != null) echo $postNav(); ?>
 			</div>
