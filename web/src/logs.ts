@@ -1,3 +1,8 @@
+declare global {
+    interface Window { logFiles: string[]; }
+}
+export {};
+
 const logList = document.getElementById("logList");
 
 /**
@@ -12,6 +17,7 @@ function setLogFile(file) {
             const log = document.getElementById("log");
             log.innerHTML = t;
             log.scrollTop = log.scrollHeight;
+            window.location.hash = file;
         });
 }
 
@@ -20,7 +26,7 @@ function setLogFile(file) {
  */
 function refreshLogFiles() {
     logList.innerHTML = "";
-    for (const log of (global as any).logFiles) {
+    for (const log of (window as any).logFiles) {
         if (log == null) continue;
 
         const li = document.createElement("li");
@@ -29,6 +35,10 @@ function refreshLogFiles() {
         li_a.classList.add("dropdown-item");
         li_a.addEventListener("click", () => {
             setLogFile(log);
+            fetch("/api/logs/files.php")
+                .then(r => r.text())
+                .then(JSON.parse)
+                .then((j : string[]) => { window.logFiles = j; });
         });
         li.appendChild(li_a);
         logList.appendChild(li);
@@ -36,3 +46,6 @@ function refreshLogFiles() {
 }
 
 refreshLogFiles();
+if (window.location.hash) {
+    setLogFile(window.location.hash.slice(1));
+}

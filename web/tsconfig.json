@@ -3,6 +3,7 @@
         "rootDir": "./",
         "outDir": "./build",
         "allowJs": false,
+        "lib": ["ES6", "DOM"],
         "target": "ES6",
         "module": "CommonJS",
         "esModuleInterop": true,

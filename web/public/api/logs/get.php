@@ -2,10 +2,11 @@
 require __DIR__ . "/../../system/get_log_files.php";
 
 if (in_array($_GET["file"], get_log_files())) {
-    header("Content-Type: text/plain");
-
-    $logsPath = __DIR__ . "/../../../../logs";
-    $lines = explode("\n", file_get_contents(realpath($logsPath . DIRECTORY_SEPARATOR . $_GET["file"])));
+    $logFile = get_log_file($_GET["file"]);
+    if ($logFile == null) {
+        http_response_code(400);
+    }
+    $lines = explode("\n", str_replace("\r\n", "\n", $logFile));
     foreach (array_slice(
         $lines,
         count($lines) - (100),

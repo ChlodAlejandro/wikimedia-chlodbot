@@ -29,9 +29,8 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 				height: calc(100vh - (74px + 56px));
 			}
 		</style>
-		<script src="/scripts/auto/logs.js"></script>
 		<script>
-			global.logFiles = <?php echo json_encode(get_log_files()) ?>;
+			window.logFiles = <?php echo json_encode(get_log_files()) ?>;
 		</script>
 	</head>
 	<body>
@@ -49,9 +48,10 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 					</div>
 				</div>
 			</nav>
-			<div id="log" class="container-fluid">
-
-			</div>
+			<div id="log" class="container-fluid py-2"><!--
+				--><span style="color: gray; font-style: italic">Select a log file...</span><!--
+			--></div>
 		</main>
+		<script src="/scripts/auto/logs.js"></script>
 	</body>
 </html>
