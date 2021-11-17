@@ -2,8 +2,8 @@
 set -e
 
 # Setup environment
-source "~/.profile"
-cd "~/project/"
+source "$HOME/.profile"
+cd "$HOME/project/"
 
 # Run task
 npm run "run:$1"
