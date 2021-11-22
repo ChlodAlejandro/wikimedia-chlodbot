@@ -1,6 +1,6 @@
 import Logger from "bunyan";
 import bunyanFormat from "bunyan-format";
-import {mwn} from "mwn";
+import {mwn, MwnOptions} from "mwn";
 import {USER_AGENT} from "../constants/Constants";
 import Timeout = NodeJS.Timeout;
 
@@ -15,12 +15,12 @@ export default class OneOffTask {
     /**
      * Creates components for a one-off task.
      */
-    static async create(taskName: string) : Promise<{ log: Logger, bot: mwn }> {
+    static async create(taskName: string, mwnOptions?: MwnOptions) : Promise<{ log: Logger, bot: mwn }> {
         const log = Logger.createLogger({
             name: taskName,
             level: process.env.NODE_ENV === "development" ? 10 : 30,
             stream: process.env.ZOOMIE_RAWLOG ? process.stdout : bunyanFormat({
-                outputMode: "short",
+                outputMode: "long",
                 levelInString: true
             }, process.stdout)
         });
@@ -34,7 +34,7 @@ export default class OneOffTask {
         await Promise.race([
             new Promise<void>(async (res, rej) => {
                 // API connection
-                bot = await mwn.init({
+                bot = await mwn.init(Object.assign({
                     apiUrl: "https://en.wikipedia.org/w/api.php",
 
                     username: process.env.ENWIKI_USERNAME,
@@ -46,7 +46,7 @@ export default class OneOffTask {
                         maxlag: 60
                     },
                     silent: true
-                }).catch(rej);
+                }, mwnOptions)).catch(rej);
 
                 // Enable emergency shutoff
                 bot.enableEmergencyShutoff({
@@ -76,7 +76,7 @@ export default class OneOffTask {
         log.info("Logged in. Ready to perform one-off task.");
 
         this.timeouts.set(bot, setTimeout(() => {
-            log.warn("One-off task still has not completed. Something must have gone wrong.");
+            log.warn("One-off task still has not completed after one hour. Something must have gone wrong.");
             log.warn("Triggering emergency destruction. Data might be lost!");
             this.destroy(log, bot);
         }, 3600000));
