@@ -25,19 +25,19 @@ interface ItemMetadata {
  */
 function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
     const [year, stormNo] = findCycloneNumber(tcb.name);
-    const month = year !== new Date().getFullYear() ? 12 : (new Date()).getMonth();
+    const month = year !== new Date().getFullYear() ? 12 : (new Date()).getMonth() + 1;
     const name = tcb.name[0].toUpperCase() + tcb.name.substr(1).toLowerCase();
     return {
         mediatype: "texts",
         collection: ["opensource"],
         creator: "Philippine Atmospheric, Geophysical and Astronomical Services Administration",
-        date: "-" + (month < 10 ? `0${month}` : month),
+        date: `${year}-${month < 10 ? `0${month}` : month}`,
         description: fs.readFileSync(
             path.resolve(__dirname, "..", "..", "assets", "PagasaArchiver-desc.html")
         ).toString()
             .replace(/{{{name}}}/g, name)
             .replace(/{{{year}}}/g, `${year}`)
-            .replace(/\r?\n/g, "\\r\\n"),
+            .replace(/\r?\n/g, "\n"),
         language: "eng",
         licenseurl: "http://creativecommons.org/publicdomain/mark/1.0/",
         subject: [
@@ -94,6 +94,12 @@ const READ_ONLY = false;
         log.debug(`Found TCB #${tcb.count} for ${stormIdentifier}.`);
         stormTCBs[stormIdentifier].push(tcb);
         years.add(stormNumber[0]);
+    }
+
+    if (TCBs.length == 0) {
+        log.info("No documents to archive.");
+        log.info("Done.");
+        await OneOffTask.destroy(log, bot);
     }
 
     const auth = await iajs.Auth.fromS3(process.env.IA_S3_ACCESS_KEY, process.env.IA_S3_SECRET_KEY);
