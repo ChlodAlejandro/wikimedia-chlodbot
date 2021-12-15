@@ -37,7 +37,7 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
         ).toString()
             .replace(/{{{name}}}/g, name)
             .replace(/{{{year}}}/g, `${year}`)
-            .replace(/\r?\n/g, "\n"),
+            .replace(/\r?\n/g, ""),
         language: "eng",
         licenseurl: "http://creativecommons.org/publicdomain/mark/1.0/",
         subject: [
