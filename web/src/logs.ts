@@ -14,6 +14,7 @@ function setLogFile(file) {
     document.getElementById("activeLog").innerText = file;
     fetch(`/api/logs/get.php?file=${encodeURIComponent(file)}`)
         .then(r => r.text())
+        .then(t => t.replace(/<(\/?)(iframe|embed|link|script)/g, "&lt;$1$2"))
         .then(t => (new (require("ansi-to-html"))).toHtml(t))
         .then(t => {
             const log = document.getElementById("log");
@@ -22,6 +23,10 @@ function setLogFile(file) {
             window.location.hash = file;
         });
 }
+
+document.getElementById("refresh").addEventListener("click", () => {
+    setLogFile(logFile);
+});
 
 /**
  * Refreshes the available log files.
@@ -51,7 +56,3 @@ refreshLogFiles();
 if (window.location.hash) {
     setLogFile(window.location.hash.slice(1));
 }
-
-document.getElementById("refresh").addEventListener("click", () => {
-    setLogFile(logFile);
-});
