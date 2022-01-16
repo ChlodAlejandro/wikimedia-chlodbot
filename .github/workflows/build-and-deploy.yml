@@ -24,9 +24,11 @@ jobs:
         needs: build
         if: ${{ github.ref == 'refs/heads/master' }}
         runs-on: ubuntu-latest
+        environment:
+            name: toolforge
+            url: https://zoomiebot.toolforge.org
 
         steps:
-            - run: echo "Making a deploy to Toolforge!"
             - name: Checkout code
               uses: actions/checkout@v2
             - name: Install SSH Key
