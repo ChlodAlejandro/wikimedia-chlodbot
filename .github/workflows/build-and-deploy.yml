@@ -35,7 +35,6 @@ jobs:
               uses: shimataro/ssh-key-action@v2
               with:
                   key: ${{ secrets.TOOLFORGE_SSH_KEY }}
-            - name: Adding Toolforge to known_hosts
-              run: ssh-keyscan -H login.toolforge.org >> ~/.ssh/known_hosts
+                  known_hosts: ${{ secrets.TOOLFORGE_KNOWN_HOSTS }}
             - name: Pull latest commit
               run: "ssh login.toolforge.org become zoomiebot bash -c /data/project/zoomiebot/project/scripts/update.sh"
