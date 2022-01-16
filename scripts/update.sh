@@ -3,9 +3,10 @@
 set -euxo pipefail
 
 ZOOMIEBOT_PATH=/data/project/zoomiebot
-GIT_HASH_OLD=`git rev-parse HEAD`
 
 cd $ZOOMIEBOT_PATH/project
+
+GIT_HASH_OLD=`git rev-parse HEAD`
 
 echo Updating project...
 
