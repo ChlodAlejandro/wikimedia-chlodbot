@@ -4,8 +4,9 @@
     "description": "Wikipedia bot.",
     "scripts": {
         "dev:web": "cd web && webpack-dev-server",
-        "build": "tsc",
+        "build": "npm run build:bot && npm run build:web",
         "build:web": "cd web && webpack",
+        "build:bot": "tsc",
         "run:test-task": "node -r ts-node/register src/one-off/TestTask.ts",
         "run:wptc-index": "node -r ts-node/register src/one-off/WPTCIndex.ts",
         "run:pagasa-archiver": "node -r ts-node/register src/one-off/PagasaArchiver.ts",

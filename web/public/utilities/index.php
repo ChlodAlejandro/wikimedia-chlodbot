@@ -24,7 +24,7 @@ $utilities = [
 			<div class="container">
 				<div class="p-5 mb-4 bg-light rounded-3">
 					<h1 class="display-4 fw-bold">Utilities</h1>
-					<p>Simple web-based utilities..</p>
+					<p>Simple web-based utilities.</p>
 					<div id="tasks">
 						<table class="table">
 							<thead>
@@ -34,7 +34,14 @@ $utilities = [
 								</tr>
 							</thead>
 							<tbody>
+								<?php if (count($utilities) == 0): ?>
+								<tr>
+									<td colspan="2">
+										<i>There's nothing here yet. Come back later!</i>
+									</td>
+								</tr>
 								<?php
+								endif;
 								foreach ($utilities as $path => $details):
 								?>
 								<tr>
@@ -52,10 +59,6 @@ $utilities = [
 							</tbody>
 						</table>
 					</div>
-					<p class="tasks-note">
-						This table is loaded from Wikipedia and may be out of date. To ensure that it is up to date,
-						<a href="https://en.wikipedia.org/w/index.php?title=User:Zoomiebot/jobs&action=purge" rel="nofollow">purge the page</a>.
-					</p>
 				</div>
 			</div>
 		</main>
