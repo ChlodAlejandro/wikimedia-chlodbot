@@ -39,4 +39,6 @@ jobs:
                   known_hosts: ${{ secrets.TOOLFORGE_KNOWN_HOSTS }}
                   config: ${{ secrets.TOOLFORGE_CONFIG }}
             - name: Pull latest commit
-              run: "ssh login.toolforge.org become zoomiebot bash -c /data/project/zoomiebot/project/scripts/update.sh"
+              run: ssh login.toolforge.org \
+                become zoomiebot \
+                  bash -c /data/project/zoomiebot/project/scripts/update.sh
