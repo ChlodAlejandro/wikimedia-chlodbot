@@ -1,6 +1,6 @@
 {
     "name": "wikimedia-zoomiebot",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Wikipedia bot.",
     "scripts": {
         "dev:web": "cd web && webpack-dev-server",
