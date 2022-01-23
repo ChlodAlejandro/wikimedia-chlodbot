@@ -139,7 +139,7 @@ const READ_ONLY = false;
                             autocreate: true,
                             wait: true,
                             keepOldVersions: false,
-                            metadata: generateMetadata(tcb),
+                            metadata: {...generateMetadata(tcb)},
                             headers: {
                                 "x-archive-interactive-priority": 1
                             },

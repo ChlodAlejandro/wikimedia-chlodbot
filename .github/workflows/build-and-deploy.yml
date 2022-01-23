@@ -15,16 +15,16 @@ jobs:
               uses: actions/checkout@v2
             - name: Installing dependencies
               run: npm ci
-            - name: Build web components
-              run: npm run build:web
-            - name: Building bot
-              run: npm run build:bot
             - name: Perform audit
               uses: oke-py/npm-audit-action@v1.8.3
               with:
                   audit_level: moderate
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   create_issues: false
+            - name: Build web components
+              run: npm run build:web
+            - name: Building bot
+              run: npm run build:bot
     deploy:
         name: Deploy to Toolforge
         needs: build
