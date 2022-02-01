@@ -19,7 +19,7 @@ jobs:
                 uses: instrumenta/kubeval-action@master
                 with:
                     files: etc
-                    token: ${{ secrets.GITHUB_TOKEN }}
+                    strict: false
     build:
         name: Build and Audit
         needs: validate
