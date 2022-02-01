@@ -17,7 +17,7 @@ spec:
                         toolforge: tool
                 spec:
                     containers:
-                        -   name: zoomiebot.unreferenced-tambayan-pages
+                        -   name: zoomiebot-unreferenced-tambayan-pages
                             image: docker-registry.tools.wmflabs.org/toolforge-buster-sssd-base:latest
                             command: [
                               # Start sh first to get run .profile data
