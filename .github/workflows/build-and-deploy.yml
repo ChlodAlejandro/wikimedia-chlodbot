@@ -38,10 +38,12 @@ jobs:
                 run: npm run build:web
             -   name: Building bot
                 run: npm run build:bot
+            # Tests are not done on GitHub Actions to avoid polluting wiki CheckUser
+            # databases.
     deploy:
         name: Deploy to Toolforge
         needs: build
-        if: ${{ github.ref_type == 'tag' }}
+        if: github.ref_type == 'tag' || github.
         runs-on: ubuntu-latest
         environment:
             name: toolforge
@@ -60,4 +62,4 @@ jobs:
             -   name: Pull latest commit
                 run: ssh login.toolforge.org \
                     become zoomiebot \
-                    bash -c /data/project/zoomiebot/project/scripts/update.sh
+                    bash /data/project/zoomiebot/project/scripts/update.sh

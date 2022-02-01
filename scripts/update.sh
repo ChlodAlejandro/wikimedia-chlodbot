@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Safety
 set -euxo pipefail
 
@@ -34,7 +35,7 @@ npm run build
 echo Done! Deployed commit $GIT_HASH.
 
 # Send email to maintainers
-bash -c scripts/update-mail.sh $GIT_HASH_OLD | mail \
+bash scripts/update-mail.sh $GIT_HASH_OLD | mail \
     -r tools.zoomiebot@toolforge.org \
     -s "New Zoomiebot version deployed [$GIT_HASH]" \
     "zoomiebot.maintainers@toolforge.org"
