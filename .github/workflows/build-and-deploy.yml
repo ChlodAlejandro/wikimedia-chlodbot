@@ -43,7 +43,9 @@ jobs:
     deploy:
         name: Deploy to Toolforge
         needs: build
-        if: github.ref_type == 'tag' || github.
+        if: github.ref_type == 'tag' || (
+            github.event.pusher.name == 'ChlodAlejandro'
+            && startsWith(github.event.head_commit.message, '[rw]'))
         runs-on: ubuntu-latest
         environment:
             name: toolforge
