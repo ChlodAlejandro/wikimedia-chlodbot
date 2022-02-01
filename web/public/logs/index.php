@@ -35,26 +35,25 @@ require_once(__DIR__ . "/../system/get_log_files.php");
 	</head>
 	<body>
 		<?php body_header(); ?>
-		<main>
-			<nav class="navbar navbar-expand-l px-2" style="height: 56px;">
-				<div class="container-fluid align-items-center justify-content-start">
-					<span class="navbar-brand">Log viewer</span>
-					<div class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="activeLog" role="button"
-						   data-bs-toggle="dropdown" aria-expanded="false">
-							Select a log file
-						</a>
-						<ul id="logList" class="dropdown-menu" aria-labelledby="activeLog"></ul>
-					</div>
-					<button class="btn btn-outline-dark">
-						<i id="refresh" class="bi bi-arrow-clockwise"></i>
-					</button>
-				</div>
-			</nav>
-			<div id="log" class="container-fluid py-2"><!--
-				--><span style="color: gray; font-style: italic">Select a log file...</span><!--
-			--></div>
-		</main>
-		<script src="/scripts/auto/logs.js"></script>
+			Logs are currently unavailable as Zoomiebot is transferred from the Grid Engine to Kubernetes.
+<!--		<main>-->
+<!--			<nav class="navbar navbar-expand-l px-2" style="height: 56px;">-->
+<!--				<div class="container-fluid align-items-center justify-content-start">-->
+<!--					<span class="navbar-brand">Log viewer</span>-->
+<!--					<div class="nav-item dropdown">-->
+<!--						<a class="nav-link dropdown-toggle" href="#" id="activeLog" role="button"-->
+<!--						   data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--							Select a log file-->
+<!--						</a>-->
+<!--						<ul id="logList" class="dropdown-menu" aria-labelledby="activeLog"></ul>-->
+<!--					</div>-->
+<!--					<button class="btn btn-outline-dark">-->
+<!--						<i id="refresh" class="bi bi-arrow-clockwise"></i>-->
+<!--					</button>-->
+<!--				</div>-->
+<!--			</nav>-->
+<!--			<div id="log" class="container-fluid py-2"><span style="color: gray; font-style: italic">Select a log file...</span></div>-->
+<!--		</main>-->
+<!--		<script src="/scripts/auto/logs.js"></script>-->
 	</body>
 </html>

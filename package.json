@@ -7,10 +7,10 @@
         "build": "npm run build:bot && npm run build:web",
         "build:web": "cd web && webpack",
         "build:bot": "tsc",
-        "run:test-task": "node -r ts-node/register src/one-off/TestTask.ts",
-        "run:wptc-index": "node -r ts-node/register src/one-off/WPTCIndex.ts",
-        "run:pagasa-archiver": "node -r ts-node/register src/one-off/PagasaArchiver.ts",
-        "run:unreferenced-tambayan-pages": "node -r ts-node/register src/one-off/UnreferencedTambayanPages.ts"
+        "run:test-task": "node -r ts-node/register bot/one-off/TestTask.ts",
+        "run:wptc-index": "node -r ts-node/register bot/one-off/WPTCIndex.ts",
+        "run:pagasa-archiver": "node -r ts-node/register bot/one-off/PagasaArchiver.ts",
+        "run:unreferenced-tambayan-pages": "node -r ts-node/register bot/one-off/UnreferencedTambayanPages.ts"
     },
     "repository": {
         "type": "git",

@@ -9,24 +9,36 @@ on:
     pull_request:
 
 jobs:
-    build:
-        name: Build and Audit
+    validate:
+        name: Validate Kubernetes configurations
         runs-on: ubuntu-latest
         steps:
-            - name: Checking out repo
-              uses: actions/checkout@v2
-            - name: Installing dependencies
-              run: npm ci
-            - name: Perform audit
-              uses: oke-py/npm-audit-action@v1.8.3
-              with:
-                  audit_level: moderate
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  create_issues: false
-            - name: Build web components
-              run: npm run build:web
-            - name: Building bot
-              run: npm run build:bot
+            -   name: Checking out repo
+                uses: actions/checkout@v2
+            -   name: Validate manifests
+                uses: makocchi-git/actions-k8s-manifests-validate-kubeval@1.0.0
+                with:
+                    files: etc
+                    token: ${{ secrets.GITHUB_TOKEN }}
+    build:
+        name: Build and Audit
+        needs: validate
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checking out repo
+                uses: actions/checkout@v2
+            -   name: Installing dependencies
+                run: npm ci
+            -   name: Perform audit
+                uses: oke-py/npm-audit-action@v1.8.3
+                with:
+                    audit_level: moderate
+                    github_token: ${{ secrets.GITHUB_TOKEN }}
+                    create_issues: true
+            -   name: Build web components
+                run: npm run build:web
+            -   name: Building bot
+                run: npm run build:bot
     deploy:
         name: Deploy to Toolforge
         needs: build
@@ -37,16 +49,16 @@ jobs:
             url: https://zoomiebot.toolforge.org
 
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - name: Install SSH Key
-              uses: shimataro/ssh-key-action@v2
-              with:
-                  key: ${{ secrets.TOOLFORGE_SSH_KEY }}
-                  name: id_ed25519
-                  known_hosts: ${{ secrets.TOOLFORGE_KNOWN_HOSTS }}
-                  config: ${{ secrets.TOOLFORGE_CONFIG }}
-            - name: Pull latest commit
-              run: ssh login.toolforge.org \
-                become zoomiebot \
-                  bash -c /data/project/zoomiebot/project/scripts/update.sh
+            -   name: Checkout code
+                uses: actions/checkout@v2
+            -   name: Install SSH Key
+                uses: shimataro/ssh-key-action@v2
+                with:
+                    key: ${{ secrets.TOOLFORGE_SSH_KEY }}
+                    name: id_ed25519
+                    known_hosts: ${{ secrets.TOOLFORGE_KNOWN_HOSTS }}
+                    config: ${{ secrets.TOOLFORGE_CONFIG }}
+            -   name: Pull latest commit
+                run: ssh login.toolforge.org \
+                    become zoomiebot \
+                    bash -c /data/project/zoomiebot/project/scripts/update.sh
