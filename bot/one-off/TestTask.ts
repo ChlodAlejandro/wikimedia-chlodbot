@@ -1,6 +1,6 @@
 import OneOffTask from "./OneOffTask";
 
-(async () => {
+export default (async () => {
     const { log, bot } = await OneOffTask.create("Test Task");
 
     log.info("Hello, world!");

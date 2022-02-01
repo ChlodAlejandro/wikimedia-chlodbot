@@ -21,7 +21,7 @@ spec:
                             image: docker-registry.tools.wmflabs.org/toolforge-bullseye-sssd:latest
                             command: [
                               # Start sh first to get run .profile data
-                                    "/usr/bin/sh",
+                                    "/bin/sh",
                               # Initialize environment
                                     "/data/project/zoomiebot/project/scripts/one-off.sh",
                               # Script to start

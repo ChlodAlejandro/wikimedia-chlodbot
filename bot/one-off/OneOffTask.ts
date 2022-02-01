@@ -31,6 +31,7 @@ export default class OneOffTask {
         }
 
         let bot;
+        let loginSafetyTimeout;
         await Promise.race([
             new Promise<void>(async (res, rej) => {
                 // API connection
@@ -64,7 +65,7 @@ export default class OneOffTask {
             }),
             new Promise<void>(async (res, rej) => {
                 await new Promise((res) => {
-                    setTimeout(res, 30000);
+                    loginSafetyTimeout = setTimeout(res, 30000);
                 });
                 rej(new Error("Failed to log in within 30 seconds."));
             })
@@ -72,6 +73,7 @@ export default class OneOffTask {
             log.fatal("Could not log in.", e);
             process.exit();
         });
+        clearTimeout(loginSafetyTimeout);
 
         log.info("Logged in. Ready to perform one-off task.");
 
@@ -90,7 +92,12 @@ export default class OneOffTask {
      * @param bot The bot instance created by {@link OneOffTask.create()}
      */
     static async destroy(log : Logger, bot : mwn) : Promise<void> {
-        clearTimeout(this.timeouts.get(bot));
+        const overrunCheck = this.timeouts.get(bot);
+        if (overrunCheck)
+            clearTimeout(overrunCheck);
+        else
+            log.warn("The overrun check was not found for this mwn instance.");
+
         bot.disableEmergencyShutoff();
         await bot.logout();
         log.info("Bot logged out. Exiting...");

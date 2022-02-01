@@ -1,7 +1,7 @@
 import { ApiResponse } from "mwn";
 import OneOffTask from "./OneOffTask";
 
-(async () => {
+export default (async () => {
     const { log, bot } = await OneOffTask.create("WPTC Indexer");
 
     /**

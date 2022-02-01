@@ -62,7 +62,7 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
 
 const READ_ONLY = false;
 
-(async () => {
+export default (async () => {
     const { log, bot } = await OneOffTask.create("PAGASA Archiver");
 
     if (process.env.IA_S3_ACCESS_KEY == null || process.env.IA_S3_SECRET_KEY == null) {

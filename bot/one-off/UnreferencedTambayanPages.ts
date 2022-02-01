@@ -6,7 +6,7 @@ import iswitch from "../util/iswitch";
 import * as path from "path";
 import * as fs from "fs/promises";
 
-(async () => {
+export default (async () => {
     const { log, bot } = await OneOffTask.create("Unreferenced Tambayan Philippines pages");
 
     log.info("Connecting to `enwiki_p`...");
