@@ -18,7 +18,7 @@ spec:
                 spec:
                     containers:
                         -   name: zoomiebot-wptc-index
-                            image: docker-registry.tools.wmflabs.org/toolforge-buster-sssd-base:latest
+                            image: docker-registry.tools.wmflabs.org/toolforge-bullseye-sssd:latest
                             command: [
                               # Start sh first to get run .profile data
                                     "/usr/bin/sh",
