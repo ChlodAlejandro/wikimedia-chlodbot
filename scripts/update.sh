@@ -21,6 +21,13 @@ GIT_HASH=`git rev-parse --short HEAD`
 
 echo Rebuilding...
 
+# Reload all Kubernetes configurations
+for file in etc/*
+do
+  kubectl apply --validate=true -f "$file"
+done
+
+
 # Build both web and bot
 npm run build
 

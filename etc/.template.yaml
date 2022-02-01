@@ -23,13 +23,13 @@ spec:
                               # Start sh first to get run .profile data
                                     "/usr/bin/sh",
                               # Initialize environment
-                                    "/data/project/redwarn/project/scripts/one-off.sh",
+                                    "/data/project/zoomiebot/project/scripts/one-off.sh",
                               # Script to start
                                     "job-name"
                             ]
-                            workingDir: /data/project/redwarn
+                            workingDir: /data/project/zoomiebot
                             env:
                                 -   name: HOME
-                                    value: /data/project/redwarn
+                                    value: /data/project/zoomiebot
                             imagePullPolicy: Always
                     restartPolicy: OnFailure
