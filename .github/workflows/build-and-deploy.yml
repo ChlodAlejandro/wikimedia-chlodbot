@@ -16,7 +16,7 @@ jobs:
             -   name: Checking out repo
                 uses: actions/checkout@v2
             -   name: Validate manifests
-                uses: makocchi-git/actions-k8s-manifests-validate-kubeval@v1.0.1
+                uses: instrumenta/kubeval-action@master
                 with:
                     files: etc
                     token: ${{ secrets.GITHUB_TOKEN }}
