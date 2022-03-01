@@ -42,7 +42,11 @@ try {
         echo "File is hidden from public view (deleted or suppressed)";
     } else {
         $videoInfo = $fileInfo->videoinfo[0];
-        if ($videoInfo->mediatype !== "VIDEO") {
+        if (empty($videoInfo)) {
+            error_log(var_export($fileInfo, true));
+            http_response_code(400);
+            echo "Bad file";
+        } else if ($videoInfo->mediatype !== "VIDEO") {
             echo $videoInfo->url;
         } else {
             $duration = $videoInfo->duration;
