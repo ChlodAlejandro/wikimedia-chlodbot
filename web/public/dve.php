@@ -1,5 +1,5 @@
 <?php
-$file = $_GET["file"] ?? substr($_SERVER["REQUEST_URI"], 5);
+$file = $_GET["file"] ?? urldecode(substr($_SERVER["REQUEST_URI"], 5));
 
 if (!empty($file)) {
     $_GET["file"] = $file;
