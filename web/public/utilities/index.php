@@ -2,11 +2,11 @@
 require_once(__DIR__ . "/../interface/head_global.php");
 require_once(__DIR__ . "/../interface/body_header.php");
 
+$zbMetadata = [
+    "title" => "Utilities",
+    "description" => "Simple web-based utilities for Wikipedia pages.",
+];
 $utilities = [
-//	"utility" => [
-//		"name" => "Utility Name",
-//		"desc" => "A concise description of the utility."
-//	]
 ];
 ?>
 <!doctype html>

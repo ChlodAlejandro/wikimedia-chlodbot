@@ -1,7 +1,11 @@
+# IDEs
 .idea
 .vscode
 
+# Dependencies
 node_modules
+
+# Built data
 build
 web/public/scripts/auto
 web/public/system/logs

@@ -2,16 +2,38 @@
 const path = require("path");
 const { ProgressPlugin } = require("webpack");
 const child_process = require("child_process");
+const fs = require("fs-jetpack");
+
+const scriptTree = fs.list(path.join(__dirname, "src"))
+    .map(entity => path.resolve(__dirname, "src", entity))
+    .filter(entity => fs.exists(entity) === "file");
+
+fs.dir(path.resolve(__dirname, "public", "scripts", "auto"));
 
 module.exports = {
     mode: process.env.NODE_ENV === "production" ? "production" : "development",
-    entry: {
-        logs: "./src/logs.ts"
-    },
+    entry: scriptTree,
     output: {
         path: path.resolve(__dirname, "public", "scripts", "auto"),
         filename: "[name].js",
         publicPath: "http://127.0.0.1:45000/scripts/auto/"
+    },
+    optimization: {
+        runtimeChunk: "single",
+        splitChunks: {
+            chunks: "all",
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name(module) {
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                        return `npm.${packageName.replace("@", "")}`;
+                    },
+                },
+            },
+        }
     },
     devServer: {
         devMiddleware: {
