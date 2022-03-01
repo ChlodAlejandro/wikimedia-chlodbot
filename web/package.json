@@ -1,18 +1,12 @@
 {
-    "name": "wikimedia-zoomiebot",
+    "name": "wikimedia-zoomiebot-frontend",
     "version": "1.1.0",
-    "description": "Wikipedia bot.",
+    "description": "Wikipedia bot frontend.",
     "scripts": {
-        "dev:web": "cd web && webpack-dev-server",
-        "build": "npm run build:bot && npm run build:web",
-        "build:web": "cd web && webpack",
-        "build:bot": "tsc",
-        "test": "jest --detectOpenHandles",
-        "run:test-task": "node -r ts-node/register bot/one-off/TestTask.ts",
-        "run:wptc-index": "node -r ts-node/register bot/one-off/WPTCIndex.ts",
-        "run:pagasa-archiver": "node -r ts-node/register bot/one-off/PagasaArchiver.ts",
-        "run:unreferenced-tambayan-pages": "node -r ts-node/register bot/one-off/UnreferencedTambayanPages.ts",
-        "version": "cross-env-shell \"npm version $npm_package_version --no-git-tag-version --workspaces\" && git add **/package*.json"
+        "dev": "npm run dev:web",
+        "dev:web": "webpack-dev-server",
+        "build": "npm run build:web",
+        "build:web": "webpack"
     },
     "repository": {
         "type": "git",

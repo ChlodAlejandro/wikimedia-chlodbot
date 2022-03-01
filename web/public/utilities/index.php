@@ -7,6 +7,10 @@ $zbMetadata = [
     "description" => "Simple web-based utilities for Wikipedia pages.",
 ];
 $utilities = [
+//    "contraster" => [
+//        "name" => "Contraster",
+//        "desc" => "Simple color contraster for Wikipedia pages."
+//    ]
 ];
 ?>
 <!doctype html>

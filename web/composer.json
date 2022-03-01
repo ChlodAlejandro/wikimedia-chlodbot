@@ -1,0 +1,15 @@
+{
+    "name": "chlodalejandro/wikimedia-zoomiebot-frontend",
+    "description": "Frontend for Wikipedia bot",
+    "type": "project",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "ChlodAlejandro",
+            "email": "chlod@chlod.net"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}

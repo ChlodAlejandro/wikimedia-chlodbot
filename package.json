@@ -3,9 +3,9 @@
     "version": "1.1.0",
     "description": "Wikipedia bot.",
     "scripts": {
-        "dev:web": "cd web && webpack-dev-server",
+        "dev:web": "npm run --workspace=web dev",
         "build": "npm run build:bot && npm run build:web",
-        "build:web": "cd web && webpack",
+        "build:web": "npm run --workspace=web build",
         "build:bot": "tsc",
         "test": "jest --detectOpenHandles",
         "run:test-task": "node -r ts-node/register bot/one-off/TestTask.ts",
@@ -14,6 +14,9 @@
         "run:unreferenced-tambayan-pages": "node -r ts-node/register bot/one-off/UnreferencedTambayanPages.ts",
         "version": "cross-env-shell \"npm version $npm_package_version --no-git-tag-version --workspaces\" && git add **/package*.json"
     },
+    "workspaces": [
+        "web"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ChlodAlejandro/wikimedia-zoomiebot.git"
