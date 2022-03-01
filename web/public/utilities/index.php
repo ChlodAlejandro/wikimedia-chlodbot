@@ -7,16 +7,15 @@ $zbMetadata = [
     "description" => "Simple web-based utilities for Wikipedia pages.",
 ];
 $utilities = [
-//    "contraster" => [
-//        "name" => "Contraster",
-//        "desc" => "Simple color contraster for Wikipedia pages."
-//    ]
+    "discord-video-embed" => [
+        "name" => "Commons Discord Video Embed",
+        "desc" => "Find the right URL to use to embed a video from Wikimedia Commons."
+    ]
 ];
 ?>
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Utilities | Zoomiebot</title>
         <?php head_global(); ?>
 
 		<!-- Page CSS -->

@@ -5,7 +5,6 @@ require_once(__DIR__ . "/interface/body_header.php");
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Zoomiebot</title>
         <?php head_global(); ?>
 
 		<!-- Page CSS -->

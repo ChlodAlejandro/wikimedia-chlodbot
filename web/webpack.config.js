@@ -1,22 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const { ProgressPlugin } = require("webpack");
+const AssetsPlugin = require("assets-webpack-plugin");
 const child_process = require("child_process");
 const fs = require("fs-jetpack");
 
-const scriptTree = fs.list(path.join(__dirname, "src"))
-    .map(entity => path.resolve(__dirname, "src", entity))
-    .filter(entity => fs.exists(entity) === "file");
+const scriptTree = Object.fromEntries(
+    fs.list(path.join(__dirname, "src"))
+        .map(entity => path.resolve(__dirname, "src", entity))
+        .filter(entity => fs.exists(entity) === "file")
+        .map(entity => [path.parse(entity).name, entity])
+);
 
 fs.dir(path.resolve(__dirname, "public", "scripts", "auto"));
 
+// noinspection JSUnusedGlobalSymbols
 module.exports = {
     mode: process.env.NODE_ENV === "production" ? "production" : "development",
     entry: scriptTree,
     output: {
         path: path.resolve(__dirname, "public", "scripts", "auto"),
         filename: "[name].js",
-        publicPath: "http://127.0.0.1:45000/scripts/auto/"
+        publicPath: "/scripts/auto/"
     },
     optimization: {
         runtimeChunk: "single",
@@ -41,23 +46,27 @@ module.exports = {
             publicPath: "/scripts/auto"
         },
         /**
-         * @param devServer {Record<any, any>}
+         * @param {[]} middlewares
+         * @param {Record<any, any>} devServer
          */
-        onBeforeSetupMiddleware: (devServer) => {
+        setupMiddlewares: (middlewares, devServer) => {
             if (!devServer) {
                 throw new Error("webpack-dev-server is not defined");
             }
-            debugger;
 
+            // This just starts the PHP built-in web server. It doesn't actually add
+            // any middleware.
             devServer.php = child_process.spawn("php", [
                 "-S",
                 "127.0.0.1:45001"
             ], {
                 cwd: path.resolve(__dirname, "public"),
-                stdio: "pipe"
+                stdio: "inherit"
             });
             if (devServer.app != null)
                 devServer.app.addListener("close", () => { devServer.php.kill("SIGTERM"); });
+
+            return middlewares;
         },
         port: 45000,
         proxy: {
@@ -66,8 +75,10 @@ module.exports = {
                 pathRewrite: { "^/web/public": "" },
             }
         },
+        hot: true,
         static: false
     },
+    devtool: process.env.NODE_ENV === "production" ? "eval-source-map" : "source-map",
     resolve: {
         extensions: [".js", ".ts", ".tsx", ".json"]
     },
@@ -77,6 +88,12 @@ module.exports = {
             entries: true,
             modules: true,
             dependencies: true
+        }),
+        new AssetsPlugin({
+            entrypoints: true,
+            useCompilerPath: true,
+            filename: "entrypoints.json",
+            removeFullPathAutoPrefix: true
         })
     ],
     module: {

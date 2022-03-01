@@ -61,6 +61,23 @@ function head_global() {
 	<link rel="stylesheet" type="text/css" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap-icons/1.7.1/font/bootstrap-icons.min.css">
 	<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Dynamic script loading -->
+	<script>
+		window.__webpack_public_path__ = "/scripts/auto";
+        window.loadJS = async function loadJS(jsFile) {
+            if (!window.webpackEntrypoints)
+                await fetch("/scripts/auto/entrypoints.json")
+                    .then(r => r.json())
+                    .then(entrypoints => {
+                        window.webpackEntrypoints = entrypoints;
+                    });
+            window.webpackEntrypoints[jsFile]["js"].forEach(function (value) {
+                const scriptUrl = new URL(value, window.location.href);
+                import(scriptUrl.toString());
+            });
+        };
+	</script>
 <?php
 }
 ?>
