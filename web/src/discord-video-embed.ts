@@ -19,7 +19,7 @@
             targetVideo.parentElement.classList.toggle("no-video", false);
         });
         const fullDveUrl = new URL(
-            (window.location.host === "zoomiebot.toolforge.org" ? "/dve?file=" : "/dve.php?file=")
+            (window.location.host === "zoomiebot.toolforge.org" ? "/dve.php?file=" : "/dve.php?file=")
                 + encodeURIComponent(file),
             window.location.href
         ).toString();
