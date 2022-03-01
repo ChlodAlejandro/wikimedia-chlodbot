@@ -34,6 +34,9 @@ npm ci
 # Build both web and bot
 npm run build
 
+# Restart webservice
+webservice restart
+
 echo Done! Deployed commit $GIT_HASH.
 
 # Send email to maintainers
