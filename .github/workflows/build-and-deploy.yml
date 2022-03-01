@@ -45,7 +45,7 @@ jobs:
         needs: build
         if: github.ref_type == 'tag' || (
             github.event.pusher.name == 'ChlodAlejandro'
-            && startsWith(github.event.head_commit.message, '[rw]'))
+            && startsWith(github.event.head_commit.message, '[force]'))
         runs-on: ubuntu-latest
         environment:
             name: toolforge

@@ -28,6 +28,8 @@ do
   kubectl apply --validate=true -f "$file"
 done
 
+# Download dependencies
+npm ci
 
 # Build both web and bot
 npm run build
