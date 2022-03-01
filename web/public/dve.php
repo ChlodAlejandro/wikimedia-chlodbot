@@ -1,5 +1,8 @@
 <?php
-$file = $_GET["file"] ?? urldecode(substr($_SERVER["REQUEST_URI"], 5));
+if ($_GET["file"])
+    $file = $_GET["file"];
+else if (substr($_SERVER["REQUEST_URI"], 0, 5) == "/dve/")
+    $file = urldecode(substr($_SERVER["REQUEST_URI"], 5));
 
 if (!empty($file)) {
     $_GET["file"] = $file;
