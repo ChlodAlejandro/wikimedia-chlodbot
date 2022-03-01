@@ -36,10 +36,10 @@ try {
     $fileInfo = json_decode($fileInfoResponse->getBody()->getContents())->query->pages[0];
     if (isset($fileInfo->missing)) {
         http_response_code(404);
-        echo "File not found";
+        echo "File not found: " . htmlspecialchars($file);
     } else if (isset($fileInfo->filehidden)) {
         http_response_code(404);
-        echo "File is hidden from public view (deleted or suppressed)";
+        echo "File is hidden from public view (deleted or suppressed): " . htmlspecialchars($file);
     } else {
         $videoInfo = $fileInfo->videoinfo[0];
         if (empty($videoInfo)) {
