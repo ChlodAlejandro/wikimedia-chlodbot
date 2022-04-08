@@ -3,6 +3,8 @@ import bunyanFormat from "bunyan-format";
 import {mwn, MwnOptions} from "mwn";
 import {USER_AGENT} from "../constants/Constants";
 import Timeout = NodeJS.Timeout;
+import * as path from "path";
+import * as fs from "fs";
 
 /**
  * Manages the mwn instance for one-off tasks.
@@ -16,6 +18,11 @@ export default class OneOffTask {
      * Creates components for a one-off task.
      */
     static async create(taskName: string, mwnOptions?: MwnOptions) : Promise<{ log: Logger, bot: mwn }> {
+        const logFile = path.resolve(__dirname, "../../.logs/" + taskName + ".log");
+        const logFileStream = fs.createWriteStream(
+            logFile, { flags: "a", encoding: "utf8" }
+        );
+
         const log = Logger.createLogger({
             name: taskName,
             level: process.env.NODE_ENV === "development" ? 10 : 30,
@@ -23,6 +30,10 @@ export default class OneOffTask {
                 outputMode: "long",
                 levelInString: true
             }, process.stdout)
+        });
+        log.addStream({
+            level: "trace",
+            stream: logFileStream
         });
 
         if (!process.env.ENWIKI_USERNAME || !process.env.ENWIKI_PASSWORD) {
