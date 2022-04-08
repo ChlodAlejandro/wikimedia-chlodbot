@@ -60,7 +60,10 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
     };
 }
 
-const READ_ONLY = false;
+/**
+ * Enable when testing.
+ */
+const READ_ONLY = true;
 
 export default (async () => {
     const { log, bot } = await OneOffTask.create("PAGASA Archiver");
