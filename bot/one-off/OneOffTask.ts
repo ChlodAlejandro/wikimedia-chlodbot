@@ -13,12 +13,22 @@ export default class OneOffTask {
 
     /** Keeps track of emergency timeouts. */
     static timeouts : Map<mwn, Timeout> = new Map<mwn, NodeJS.Timeout>();
+    /** Path of the log folder. */
+    static readonly logPath = path.resolve(__dirname, "..", "..", ".logs");
 
     /**
      * Creates components for a one-off task.
      */
     static async create(taskName: string, mwnOptions?: MwnOptions) : Promise<{ log: Logger, bot: mwn }> {
-        const logFile = path.resolve(__dirname, "../../.logs/" + taskName + ".log");
+        if (!fs.existsSync(OneOffTask.logPath)) {
+            fs.mkdirSync(OneOffTask.logPath);
+        }
+        const logFile = path.resolve(
+            OneOffTask.logPath,
+            taskName
+                .replace(/[^a-z0-9]/gi, "-")
+                .toLowerCase() + ".log"
+        );
         const logFileStream = fs.createWriteStream(
             logFile, { flags: "a", encoding: "utf8" }
         );
