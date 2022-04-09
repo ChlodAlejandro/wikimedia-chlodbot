@@ -4,7 +4,7 @@ import iajs from "@chlodalejandro/iajs";
 import * as fs from "fs";
 import cheerio from "cheerio";
 import path from "path";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {USER_AGENT} from "../constants/Constants";
 import FormData from "form-data";
 
@@ -55,7 +55,7 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
         }, ${
             year.toString().substr(2)
         }-TC${
-            stormNo
+            stormNo < 10 ? `0${stormNo}` : stormNo
         }`
     };
 }
@@ -63,7 +63,7 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
 /**
  * Enable when testing.
  */
-const READ_ONLY = true;
+const READ_ONLY = false;
 
 export default (async () => {
     const { log, bot } = await OneOffTask.create("PAGASA Archiver");
@@ -88,7 +88,9 @@ export default (async () => {
             }). Skipping...`);
         }
 
-        const stormIdentifier = `pagasa-${stormNumber[0].toString().substr(2)}-TC${stormNumber[1]}`;
+        const stormIdentifier = `pagasa-${stormNumber[0].toString().substr(2)}-TC${
+            stormNumber[1] < 10 ? `0${stormNumber[1]}` : stormNumber[1]
+        }`;
 
         if (stormTCBs[stormIdentifier] == null) {
             log.info(`Found storm: ${stormIdentifier} (${tcb.name})`);
@@ -132,8 +134,9 @@ export default (async () => {
             } else {
                 // Not yet uploaded.
                 try {
-                    const downloaded =
+                    const downloaded: AxiosResponse<Buffer> =
                         await PagasaScraper.downloadTCB(tcb.file, {responseType: "arraybuffer"});
+                    log.debug("TCB downloaded from PAGASA.");
                     if (!READ_ONLY)
                         await iajs.S3API.upload({
                             identifier,
@@ -144,7 +147,8 @@ export default (async () => {
                             keepOldVersions: false,
                             metadata: {...generateMetadata(tcb)},
                             headers: {
-                                "x-archive-interactive-priority": 1
+                                "x-archive-interactive-priority": 1,
+                                "x-archive-size-hint": downloaded.data.byteLength,
                             },
                             auth
                         });
@@ -157,7 +161,7 @@ export default (async () => {
         }
     }
 
-    if (uploadedFiles > 0) {
+    if (uploadedFiles > 0 || true) {
         // Get Parsoid page
         for (const year of years) {
             let pageExists : boolean = true;
@@ -176,7 +180,9 @@ export default (async () => {
                 .catch(e => {
                     if (e.response && e.response.status === 404) {
                         pageExists = false;
-                        return cheerio.load("<section data-mw-section-id=\"0\"><ul></ul></section>");
+                        return cheerio.load(`<section data-mw-section-id=\"0\">
+                            <ul></ul>
+                        </section>`);
                     }
                     throw e;
                 });
@@ -186,7 +192,14 @@ export default (async () => {
                 mw: any,
                 t: any
             }> = {};
-            const list = $("ul");
+
+            // noinspection JSJQueryEfficiency
+            let list = $("ul");
+            if (list.length === 0) {
+                $("[data-mw-section-id=\"0\"]").append("<ul></ul>");
+                list = $("ul");
+            }
+
             list.find("[data-mw]").each((i, e) => {
                 try {
                     const mw = JSON.parse($(e).attr("data-mw"));
@@ -238,7 +251,9 @@ export default (async () => {
                                     "active": { wt: "yes" },
                                     "year": { wt: year.toString() },
                                     "name": { wt: name },
-                                    "designation": { wt: `TC${designation}` },
+                                    "designation": {
+                                        wt: `TC${designation < 10 ? `0${designation}` : designation }`
+                                    },
                                     "local-name": { wt: name  },
                                     "date": { wt: new Date().toISOString().substr(0, 10) },
                                     "TCBs": { wt: max.toString() }
@@ -250,9 +265,9 @@ export default (async () => {
                     if (!active) {
                         delete mw.parts[0].template.params.active;
                     }
-                    list.add(`<li><span typeof="mw:Transclusion" data-mw="${
-                        JSON.stringify(mw).replace(/"/g, "'")
-                    }" about="N${
+                    list.append(`<li><span typeof="mw:Transclusion" data-mw='${
+                        JSON.stringify(mw)
+                    }' about="N${
                         Math.random().toString().substr(2)
                     }"></span></li>`);
                 }
