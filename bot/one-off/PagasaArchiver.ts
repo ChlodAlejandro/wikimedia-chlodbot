@@ -223,7 +223,7 @@ export default (async () => {
             }`));
             for (const storm of matchingStorms) {
                 const matchingTCBs = stormTCBs[storm];
-                const designation = findCycloneNumber(matchingTCBs[0].name)[1];
+                const designation = `${findCycloneNumber(matchingTCBs[0].name)[1]}`.padStart(2, "0");
                 const max = matchingTCBs.reduce(
                     (p, n) => n.count > p.count ? n : p
                 ).count;
@@ -252,7 +252,7 @@ export default (async () => {
                                     "year": { wt: year.toString() },
                                     "name": { wt: name },
                                     "designation": {
-                                        wt: `TC${designation < 10 ? `0${designation}` : designation }`
+                                        wt: `TC${designation}`
                                     },
                                     "local-name": { wt: name  },
                                     "date": { wt: new Date().toISOString().substr(0, 10) },
