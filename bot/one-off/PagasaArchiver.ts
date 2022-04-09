@@ -161,7 +161,7 @@ export default (async () => {
         }
     }
 
-    if (uploadedFiles > 0 || true) {
+    if (uploadedFiles > 0) {
         // Get Parsoid page
         for (const year of years) {
             let pageExists : boolean = true;
