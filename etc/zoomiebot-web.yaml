@@ -41,7 +41,7 @@ spec:
                   stdin: false
                   tty: false
                   workingDir: /data/project/zoomiebot/
-                - command: [/usr/bin/bash, -c, "npm run start"]
+                - command: [/usr/bin/bash, "-c", "source $HOME/.profile && npm run start"]
                   image: docker-registry.tools.wmflabs.org/toolforge-bullseye-sssd:latest
                   name: bot
                   ports:
@@ -51,4 +51,4 @@ spec:
                       requests: {cpu: '0.125', memory: 256Mi}
                   stdin: false
                   tty: false
-                  workingDir: /data/project/zoomiebot/
+                  workingDir: /data/project/zoomiebot/project
