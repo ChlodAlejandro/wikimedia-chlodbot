@@ -15,11 +15,11 @@ webservice_labels = {
 webservice_label_selector = ",".join(
     [
         "{k}={v}".format(k=k, v=v)
-        for k, v in self.webservice_labels.items()
+        for k, v in webservice_labels.items()
         if k not in ["toolforge", "name"]
     ]
 )
 
-api.delete_objects("ingresses", self.webservice_label_selector)
-api.delete_objects("services", self.webservice_label_selector)
+api.delete_objects("ingresses", webservice_label_selector)
+api.delete_objects("services", webservice_label_selector)
 print("Stopped.")
