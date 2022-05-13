@@ -4,6 +4,10 @@ import Logger from "bunyan";
 import bunyanFormat from "bunyan-format";
 import express from "express";
 import * as net from "net";
+import recentchanges from "./api/rss/recentchanges";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+export const zoomiebotPackage = require("../package.json");
 
 /**
  * Zoomiebot's continuous process. Handles Node-processed web requests,
@@ -35,6 +39,10 @@ export default class Zoomiebot {
      * The Express instance that handles HTTP requests.
      */
     app: express.Express;
+    /**
+     * The Express instance that handles API HTTP requests.
+     */
+    apiRouter: express.Router;
     /**
      * The `net.Server` that takes in HTTP requests. This passes requests to `app`.
      */
@@ -71,14 +79,18 @@ export default class Zoomiebot {
      */
     async start(): Promise<void> {
         this.setupLogger();
-        this.log.info("Zoomiebot is starting...");
+        this.log.info(`Zoomiebot v${zoomiebotPackage.version} is starting...`);
 
         this.app = express();
-        this.app.get("*", (req, res) => {
+        this.app.get("/", (req, res) => {
             res.type("text/plain");
             res.send("Zoomiebot is running!");
         });
 
+        this.apiRouter = express.Router();
+        this.apiRouter.get("/rss/recentchanges/:wiki", recentchanges);
+
+        this.app.use("/api", this.apiRouter);
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {
             this.log.info(`Server started on port ${process.env.PORT ?? 8001}.`);
         });

@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "incremental": true,
         "outDir": "./build",
         "allowJs": false,
         "target": "es6",
@@ -7,7 +8,11 @@
         "esModuleInterop": true,
         "inlineSources": true,
         "sourceMap": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+
+        /* Experimental Options */
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "include": [
         "./bot/**/*",
