@@ -15,7 +15,7 @@ export default function transformWikitextSummary(
     const linkReplacedSummary = summary.replace(linkRegex, (substr, rawLink, rawLinkLabel) => {
         const code = `--#ZB-UNIQ#--${Date.now()}-${Math.random()}#-`;
 
-        const linkName = (new wiki.title(rawLinkLabel ?? rawLink)).getPrefixedText();
+        const linkName = rawLinkLabel ?? rawLink;
         const linkTarget = (new wiki.title(rawLink));
         if (links[linkTarget.getPrefixedText()] !== false) {
             toInflate[code] = `<a href="/wiki/${linkTarget.getPrefixedDb()}">${
@@ -24,7 +24,9 @@ export default function transformWikitextSummary(
         } else {
             toInflate[code] = `<a href="/w/index.php?title=${
                 encodeURIComponent(linkTarget.getPrefixedDb())
-            }&action=edit&redlink=1" class="new" title="${linkName} (page does not exist)">${
+            }&action=edit&redlink=1" class="new" title="${
+                linkTarget.getPrefixedText()
+            } (page does not exist)">${
                 linkName
             }</a>`;
         }

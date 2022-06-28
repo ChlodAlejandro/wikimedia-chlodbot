@@ -153,7 +153,9 @@ export default async function(req: express.Request, res: express.Response): Prom
                     const summaryWikitext = new wiki.wikitext(revision.comment);
                     summaryWikitext.parseLinks();
                     summaryLinks.push(
-                        ...summaryWikitext.links.map(v => v.target.getPrefixedText())
+                        ...summaryWikitext.links.map(v => v.target.getPrefixedText()),
+                        ...summaryWikitext.categories.map(v => v.target.getPrefixedText()),
+                        ...summaryWikitext.files.map(v => v.target.getPrefixedText())
                     );
                 }
             }
@@ -171,11 +173,11 @@ export default async function(req: express.Request, res: express.Response): Prom
     for (const response of summaryPageCheckQuery) {
         if (response.query.redirects) {
             for (const redirect of response.query.redirects) {
-                summaryLinks[redirect.from] = "redirect";
+                summaryLinkChecks[redirect.from] = "redirect";
             }
         }
         for (const page of response.query.pages) {
-            summaryLinks[page.title] = !page.missing;
+            summaryLinkChecks[page.title] = !page.missing;
         }
     }
 
