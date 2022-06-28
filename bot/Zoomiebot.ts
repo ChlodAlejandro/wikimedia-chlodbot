@@ -5,6 +5,10 @@ import bunyanFormat from "bunyan-format";
 import express from "express";
 import * as net from "net";
 import recentchanges from "./api/rss/recentchanges";
+import { mwn } from "mwn";
+import {USER_AGENT} from "./constants/Constants";
+import revisions from "./api/deputy/revisions";
+import compression from "compression";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const zoomiebotPackage = require("../package.json");
@@ -30,11 +34,21 @@ export default class Zoomiebot {
      * The path to the log folder.
      */
     static readonly logPath = path.resolve(__dirname, "..", ".logs");
+    /**
+     * List of wikis that this bot is enabled on.
+     */
+    static readonly enabledWikis = <const>{
+        "enwiki": "https://en.wikipedia.org/w/api.php"
+    };
 
     /**
      * The Zoomiebot log. Logs to the bot `.logs` folder and stdout.
      */
     log: Logger;
+    /**
+     * The bot mwn instances.
+     */
+    mwn: Partial<Record<keyof (typeof Zoomiebot)["enabledWikis"], mwn>> = {};
     /**
      * The Express instance that handles HTTP requests.
      */
@@ -75,20 +89,78 @@ export default class Zoomiebot {
     }
 
     /**
+     * Log into a wiki. This will be put in the `mwn variable.
+     * @param wiki
+     */
+    async wikiLogin(wiki: keyof (typeof Zoomiebot)["enabledWikis"]): Promise<void> {
+        this.mwn[wiki] = await mwn.init({
+            apiUrl: Zoomiebot.enabledWikis[wiki],
+
+            username: process.env[`${wiki.toUpperCase()}_USERNAME`],
+            password: process.env[`${wiki.toUpperCase()}_PASSWORD`],
+
+            userAgent: USER_AGENT,
+            defaultParams: {
+                assert: "user",
+                maxlag: 60,
+
+                format: "json",
+                formatversion: "2",
+                utf8: 1,
+            },
+            silent: true
+        });
+    }
+
+    /**
+     * Automatically wraps an Express route function with a catcher in the event that
+     * an exception remains uncaught.
+     */
+    apiRoute(route: (req: express.Request, res: express.Response) => Promise<void>)
+        : (req: express.Request, res: express.Response) => Promise<void> {
+        return (req, res) => {
+            return route(req, res).catch((err) => {
+                this.log.error(err);
+                res
+                    .status(500)
+                    .send({
+                        error: {
+                            code: "zb_internal_error",
+                            info: "Internal server error: " + err.message
+                        }
+                    });
+            });
+        };
+    }
+
+    /**
      * Starts Zoomiebot.
      */
     async start(): Promise<void> {
         this.setupLogger();
         this.log.info(`Zoomiebot v${zoomiebotPackage.version} is starting...`);
 
+        // We log the client in now than later in order to immediately die in the
+        // event that some provided credentials fail to log in.
+        this.log.info("Logging into wikis...");
+        await Promise.all(
+            Object.keys(Zoomiebot.enabledWikis).map(
+                (wiki) => this.wikiLogin(wiki as keyof (typeof Zoomiebot)["enabledWikis"])
+            )
+        );
+
         this.app = express();
+        this.app.use(compression());
+        this.app.use(express.json());
+        this.app.use(express.urlencoded());
         this.app.get("/", (req, res) => {
             res.type("text/plain");
             res.send("Zoomiebot is running!");
         });
 
         this.apiRouter = express.Router();
-        this.apiRouter.get("/rss/recentchanges/:wiki", recentchanges);
+        this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(recentchanges));
+        this.apiRouter.get("/deputy/revisions/:wiki", this.apiRoute(revisions));
 
         this.app.use("/api", this.apiRouter);
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {
@@ -108,6 +180,13 @@ export default class Zoomiebot {
 
 // noinspection JSIgnoredPromiseFromCall
 Zoomiebot.i.start();
+
+process.on("uncaughtException", (err) => {
+    Zoomiebot.i.log.error("Uncaught exception: " + err.message, err);
+});
+process.on("unhandledRejection", (err) => {
+    Zoomiebot.i.log.error("Unhandled rejection.", err);
+});
 
 process.once("SIGINT", function () {
     // noinspection JSIgnoredPromiseFromCall
