@@ -4,11 +4,10 @@ import Logger from "bunyan";
 import bunyanFormat from "bunyan-format";
 import express from "express";
 import * as net from "net";
-import recentchanges from "./api/rss/recentchanges";
 import { mwn } from "mwn";
 import {USER_AGENT} from "./constants/Constants";
-import revisions from "./api/deputy/revisions";
 import compression from "compression";
+import api from "./api";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const zoomiebotPackage = require("../package.json");
@@ -159,8 +158,8 @@ export default class Zoomiebot {
         });
 
         this.apiRouter = express.Router();
-        this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(recentchanges));
-        this.apiRouter.get("/deputy/revisions/:wiki", this.apiRoute(revisions));
+        this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(api.rss.recentchanges));
+        this.apiRouter.get("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
 
         this.app.use("/api", this.apiRouter);
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {

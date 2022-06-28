@@ -2,8 +2,8 @@
 
 import express from "express";
 import {ApiResponse} from "mwn";
-import Zoomiebot from "../../Zoomiebot";
-import transformWikitextSummary from "../../util/transformWikitextSummary";
+import Zoomiebot from "../../../Zoomiebot";
+import transformWikitextSummary from "../../../util/transformWikitextSummary";
 
 interface RevisionData  {
     revid: number,
