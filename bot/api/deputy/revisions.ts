@@ -188,5 +188,8 @@ export default async function(req: express.Request, res: express.Response): Prom
 
     res
         .status(200)
-        .send(revisionBank);
+        .send({
+            version: 1,
+            revisions: revisionBank
+        });
 }
