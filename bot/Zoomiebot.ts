@@ -159,6 +159,8 @@ export default class Zoomiebot {
 
         this.apiRouter = express.Router();
         this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(api.rss.recentchanges));
+
+        this.apiRouter.get("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
         this.apiRouter.get("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
 
         this.app.use("/api", this.apiRouter);
