@@ -35,6 +35,21 @@ interface ApiQueryRevisionResponse extends ApiResponse {
     }
 }
 
+interface ExpandedRevision extends RevisionData {
+    page: {
+        pageid: number,
+            ns: number,
+            title: string,
+    }
+    diffsize: number,
+        parsedcomment?: string
+}
+
+interface MissingRevision {
+    revid: number;
+    missing?: true;
+}
+
 /**
  * Gets Deputy-specific information of a page.
  */
@@ -131,10 +146,7 @@ export default async function(req: express.Request, res: express.Response): Prom
         : [];
 
     const summaryLinks = [];
-    const revisionBank: Record<number, (RevisionData & {
-        diffsize: number,
-        parsedcomment?: string
-    }) | { revid: number, missing?: true }> = {};
+    const revisionBank: Record<number, ExpandedRevision | MissingRevision> = {};
     for (const response of mainQueries) {
         // Handle missing/deleted/suppressed revision IDs
         if (response.query.badrevids) {
@@ -147,7 +159,12 @@ export default async function(req: express.Request, res: express.Response): Prom
                 revisionBank[revision.revid] = Object.assign(revision, {
                     diffsize: revision.parentid
                         ? revision.size - parentQueries[revision.parentid].size
-                        : revision.size
+                        : revision.size,
+                    page: {
+                        pageid: page.pageid,
+                        ns: page.ns,
+                        title: page.title
+                    }
                 });
                 if (revision.comment) {
                     const summaryWikitext = new wiki.wikitext(revision.comment);
@@ -185,7 +202,12 @@ export default async function(req: express.Request, res: express.Response): Prom
         if ((revision as any).comment == null)
             continue;
         (revision as any).parsedcomment =
-            transformWikitextSummary(wiki, (revision as RevisionData).comment, summaryLinkChecks);
+            transformWikitextSummary(
+                wiki,
+                (revision as ExpandedRevision).page.title,
+                (revision as ExpandedRevision).comment,
+                summaryLinkChecks
+            );
     }
 
     res
