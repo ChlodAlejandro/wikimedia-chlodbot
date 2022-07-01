@@ -57,7 +57,7 @@ export default async function createConnection(
 
     const toolsDB = database.startsWith(":");
     if (toolsDB)
-        database = database.substr(1);
+        database = database.substring(1);
     else
         database = database.replace(/_p$/, "");
     const actualDatabase = toolsDB ? config.user + "__" + database : database + "_p";
