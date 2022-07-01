@@ -115,7 +115,7 @@ export default async function(req: express.Request, res: express.Response): Prom
     }, "revids") as ApiQueryRevisionResponse[];
     const parentRevIds = mainQueries.reduce<number[]>(
         (revisions, response) => {
-            if (!response.query.pages)
+            if (!response?.query?.pages)
                 Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
 
             for (const page of response.query.pages) {
@@ -138,7 +138,7 @@ export default async function(req: express.Request, res: express.Response): Prom
             "revids": parentRevIds
         }, "revids").then((responses: ApiQueryRevisionResponse[]) =>
             responses.reduce<[number, RevisionData][]>((revisions, response) => {
-                if (!response.query.pages)
+                if (!response?.query?.pages)
                     Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
 
                 for (const page of response.query.pages) {
@@ -194,7 +194,7 @@ export default async function(req: express.Request, res: express.Response): Prom
         }, "titles")
         : [];
     for (const response of summaryPageCheckQuery) {
-        if (!response.query.pages)
+        if (!response?.query?.pages)
             Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
 
         if (response.query.redirects) {
