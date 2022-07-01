@@ -115,6 +115,9 @@ export default async function(req: express.Request, res: express.Response): Prom
     }, "revids") as ApiQueryRevisionResponse[];
     const parentRevIds = mainQueries.reduce<number[]>(
         (revisions, response) => {
+            if (!response.query.pages)
+                Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
+
             for (const page of response.query.pages) {
                 for (const revision of page.revisions) {
                     if (revision.parentid) {
@@ -135,6 +138,9 @@ export default async function(req: express.Request, res: express.Response): Prom
             "revids": parentRevIds
         }, "revids").then((responses: ApiQueryRevisionResponse[]) =>
             responses.reduce<[number, RevisionData][]>((revisions, response) => {
+                if (!response.query.pages)
+                    Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
+
                 for (const page of response.query.pages) {
                     for (const revision of page.revisions) {
                         revisions.push([revision.revid, revision]);
@@ -188,6 +194,9 @@ export default async function(req: express.Request, res: express.Response): Prom
         }, "titles")
         : [];
     for (const response of summaryPageCheckQuery) {
+        if (!response.query.pages)
+            Zoomiebot.i.log.warn("Unexpected API response: " + JSON.stringify( response ));
+
         if (response.query.redirects) {
             for (const redirect of response.query.redirects) {
                 summaryLinkChecks[redirect.from] = "redirect";
