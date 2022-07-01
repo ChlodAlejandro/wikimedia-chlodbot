@@ -39,6 +39,11 @@ export default class Zoomiebot {
     static readonly enabledWikis = <const>{
         "enwiki": "https://en.wikipedia.org/w/api.php"
     };
+    /**
+     * Allowed origins for CORS requests.
+     */
+    static readonly allowedOrigins = Object.values(Zoomiebot.enabledWikis)
+        .map((url) => new URL(url).origin);
 
     /**
      * The Zoomiebot log. Logs to the bot `.logs` folder and stdout.
@@ -118,6 +123,10 @@ export default class Zoomiebot {
     apiRoute(route: (req: express.Request, res: express.Response) => Promise<void>)
         : (req: express.Request, res: express.Response) => Promise<void> {
         return (req, res) => {
+            if (req.headers.origin && Zoomiebot.allowedOrigins.includes(req.headers.origin)) {
+                res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+            }
+
             return route(req, res).catch((err) => {
                 this.log.error(err);
                 res
@@ -160,8 +169,8 @@ export default class Zoomiebot {
         this.apiRouter = express.Router();
         this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(api.rss.recentchanges));
 
-        this.apiRouter.get("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
-        this.apiRouter.get("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
+        this.apiRouter.all("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
+        this.apiRouter.all("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
 
         this.app.use("/api", this.apiRouter);
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {
