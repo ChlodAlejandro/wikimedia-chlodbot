@@ -110,7 +110,7 @@ export default async function(req: express.Request, res: express.Response): Prom
         "action": "query",
         "format": "json",
         "prop": "revisions",
-        "rvprop": "ids|timestamp|flags|comment|user|size",
+        "rvprop": "ids|timestamp|flags|comment|user|size|tags",
         "revids": revisions
     }, "revids") as ApiQueryRevisionResponse[];
     const parentRevIds = mainQueries.reduce<number[]>(
