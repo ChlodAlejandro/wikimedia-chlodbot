@@ -105,7 +105,6 @@ export default class Zoomiebot {
 
             userAgent: USER_AGENT,
             defaultParams: {
-                assert: "user",
                 maxlag: 60,
 
                 format: "json",
