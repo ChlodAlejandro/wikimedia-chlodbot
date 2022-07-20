@@ -93,7 +93,7 @@ export default class Zoomiebot {
     }
 
     /**
-     * Log into a wiki. This will be put in the `mwn variable.
+     * Log into a wiki. This will be put in the `mwn` variable.
      * @param wiki
      */
     async wikiLogin(wiki: keyof (typeof Zoomiebot)["enabledWikis"]): Promise<void> {
