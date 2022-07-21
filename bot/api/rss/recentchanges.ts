@@ -173,6 +173,11 @@ export default async function(req: express.Request, res: express.Response): Prom
             item += `<zbrss:image>${
                 rev.thumbnail.source
             }</zbrss:image>`;
+        item += `<zbrss:diffimage>https://zoomiebot.toolforge.org/api/renderer/diff/${
+            wikiHost
+        }/${
+            rev.revid
+        }</zbrss:diffimage>`;
         item += "<zbrss:type>diff</zbrss:type>";
         item += `<zbrss:eventid>${rev.revid}</zbrss:eventid>`;
         item += `<zbrss:description>${
