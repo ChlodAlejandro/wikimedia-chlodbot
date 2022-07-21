@@ -68,8 +68,17 @@ export default class BrowserUtils {
         Zoomiebot.i.log.debug(`[R:${i}] Rendering diff: ${targetURL.toString()}`);
 
         const page = await this.browser.newPage();
-        await page.goto(targetURL.toString());
-        Zoomiebot.i.log.debug(`[R:${i}] Navigated to page...`);
+        try {
+            await page.setViewport({
+                width: 1366,
+                height: 768,
+                deviceScaleFactor: 2
+            });
+            await page.goto(targetURL.toString());
+            Zoomiebot.i.log.debug(`[R:${i}] Navigated to page...`);
+        } catch (e) {
+            await page.close();
+        }
 
         let targetSelector = mode === "visual"
             ? ".ve-ui-diffElement"
