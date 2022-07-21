@@ -8,6 +8,7 @@ import { mwn } from "mwn";
 import {USER_AGENT} from "./constants/Constants";
 import compression from "compression";
 import api from "./api";
+import BrowserUtils from "./util/BrowserUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const zoomiebotPackage = require("../package.json");
@@ -157,6 +158,10 @@ export default class Zoomiebot {
         );
 
         this.app = express();
+        this.app.use((req, res, next) => {
+            this.log.debug(`${req.method} [${req.ip}] ${req.path}`);
+            next();
+        });
         this.app.use(compression());
         this.app.use(express.json());
         this.app.use(express.urlencoded());
@@ -166,7 +171,9 @@ export default class Zoomiebot {
         });
 
         this.apiRouter = express.Router();
-        this.apiRouter.get("/rss/recentchanges/:wiki", this.apiRoute(api.rss.recentchanges));
+        this.apiRouter.get("/rss/recentchanges/:wikiHost", this.apiRoute(api.rss.recentchanges));
+
+        this.apiRouter.get("/renderer/diff/:wikiHost/:to", this.apiRoute(api.renderer.diff));
 
         this.apiRouter.all("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
         this.apiRouter.all("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
@@ -175,6 +182,14 @@ export default class Zoomiebot {
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {
             this.log.info(`Server started on port ${process.env.PORT ?? 8001}.`);
         });
+
+        // Do some post-startup activities that can take a while.
+        // Wrapped in a closure to prevent the "missing await for async" warning.
+
+        // Startup BrowserUtils
+        (() => {
+            BrowserUtils.assertBrowser();
+        })();
     }
 
     /**

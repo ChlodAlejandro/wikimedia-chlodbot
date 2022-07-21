@@ -12,10 +12,10 @@ import pretty from "pretty";
  * Expands the usual RecentChanges RSS feed with more details.
  */
 export default async function(req: express.Request, res: express.Response): Promise<void> {
-    const { wiki } = req.params;
+    const { wikiHost } = req.params;
     const params = req.query;
 
-    if (/[^a-z\d.\-]/i.test(wiki))
+    if (/[^a-z\d.\-]/i.test(wikiHost))
         res.status(400).send("Invalid wiki");
     if (Object.keys(params).some((v) => ![
         "namespace", "invert", "associated", "days", "limit", "from",
@@ -25,7 +25,7 @@ export default async function(req: express.Request, res: express.Response): Prom
     ].includes(v)))
         res.status(400).send("Unexpected parameter.");
 
-    const wikiURL = new URL(`https://${wiki}/w/`);
+    const wikiURL = new URL(`https://${wikiHost}/w/`);
     if (
         !/(mediawiki|wiki(books|media|news|[mp]edia|quote|source|versity|voyage|data)|wiktionary)\.org$/.test(wikiURL.hostname)
     ) {
