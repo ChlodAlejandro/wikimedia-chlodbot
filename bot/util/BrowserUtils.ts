@@ -1,5 +1,6 @@
 import puppeteer, {Browser} from "puppeteer";
 import Zoomiebot from "../Zoomiebot";
+import ZoomiebotCache from "./ZoomiebotCache";
 
 /**
  * Utilities for doing things with a browser. Helps with rendering HTML, among other things.
@@ -20,27 +21,40 @@ export default class BrowserUtils {
     static browser: Browser;
 
     /**
+     * Stores rendered images for caching. Automatically pruned.
+     */
+    static renderCache: ZoomiebotCache = new ZoomiebotCache();
+
+    /**
      * Ensures that `.browser` is populated with a Puppeteer browser.
      */
     static async assertBrowser(): Promise<void> {
-        if (this.launching) {
-            await new Promise<void>( (res) => {
-                const i = setInterval(() => {
-                    if (!this.launching) {
-                        res();
-                    }
-                    clearInterval(i);
-                }, 20);
-            });
-        } else {
-            this.launching = true;
-        }
-
         if (this.browser == null || !this.browser.isConnected()) {
+            if (this.launching) {
+                await new Promise<void>( (res) => {
+                    const i = setInterval(() => {
+                        if (!this.launching) {
+                            res();
+                        }
+                        clearInterval(i);
+                    }, 20);
+                });
+                return;
+            } else {
+                this.launching = true;
+            }
+
             this.browser = await puppeteer.launch();
             Zoomiebot.i.log.info("BrowserUtils started.");
             this.launching = false;
         }
+    }
+
+    /**
+     * Closes the browser.
+     */
+    static async closeBrowser(): Promise<void> {
+        await this.browser.close();
     }
 
     /**
@@ -65,7 +79,16 @@ export default class BrowserUtils {
         targetURL.searchParams.set("diffmode", `${mode}`);
         if (options.from)
             targetURL.searchParams.set("oldid", `${options.from}`);
-        Zoomiebot.i.log.debug(`[R:${i}] Rendering diff: ${targetURL.toString()}`);
+
+        const cacheKey = `browserUtils::diffRender++${
+            Buffer.from(targetURL.toString()).toString("base64")
+        }`;
+        if (this.renderCache.has(cacheKey)) {
+            Zoomiebot.i.log.debug(`[R:${i}] Cache hit!`);
+            return this.renderCache.get<Buffer>(cacheKey);
+        } else {
+            Zoomiebot.i.log.debug(`[R:${i}] Rendering diff: ${targetURL.toString()}`);
+        }
 
         const page = await this.browser.newPage();
         try {
@@ -101,6 +124,7 @@ export default class BrowserUtils {
         await page.close();
 
         Zoomiebot.i.log.debug(`[R:${i}] Rendered!`);
+        this.renderCache.put(cacheKey, screenshotImage);
 
         return screenshotImage;
     }

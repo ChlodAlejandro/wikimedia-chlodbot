@@ -7,7 +7,7 @@ const APIRendererDiffParam = <const>["to", "from", "mode"];
  * Renders a diff.
  */
 export default async function(req: express.Request, res: express.Response): Promise<void> {
-    const {wikiHost, to} = req.params;
+    let {wikiHost, to} = req.params;
     const params = req.query as Record<typeof APIRendererDiffParam[number], string>;
 
     if (/[^a-z\d.\-]/i.test(wikiHost))
@@ -17,9 +17,16 @@ export default async function(req: express.Request, res: express.Response): Prom
 
     if (to == null) {
         res.status(400).send("No target revision ID given");
-    } else if (isNaN(+to)) {
-        res.status(400).send("Invalid revision ID given");
-    } else if (params.from && isNaN(+params.from)) {
+    } else {
+        if (/\.(png)$/.test(to)) {
+            to = to.replace(/\.(png)$/, "");
+        }
+
+        if (isNaN(+to)) {
+            res.status(400).send("Invalid revision ID given");
+        }
+    }
+    if (params.from && isNaN(+params.from)) {
         res.status(400).send("Invalid `from` revision ID given");
     }
 

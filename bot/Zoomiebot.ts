@@ -66,6 +66,10 @@ export default class Zoomiebot {
      * The `net.Server` that takes in HTTP requests. This passes requests to `app`.
      */
     server: net.Server;
+    /**
+     * A list of intervals. All of these will be cleared upon exit.
+     */
+    intervals: NodeJS.Timeout[] = [];
 
     /**
      * Set up the bunyan logger.
@@ -189,6 +193,10 @@ export default class Zoomiebot {
         // Startup BrowserUtils
         (() => {
             BrowserUtils.assertBrowser();
+
+            this.intervals.push(setInterval(() => {
+                BrowserUtils.renderCache.pruneOld( 600e3 );
+            }, 5000));
         })();
     }
 
@@ -197,7 +205,15 @@ export default class Zoomiebot {
      */
     async stop(): Promise<void> {
         this.log.info("Stopping...");
+
+        // Stop listening for new requests first.
         this.server.close();
+
+        // Terminate all timeouts
+        this.intervals.forEach((v) => clearInterval(v));
+
+        // Shutdown BrowserUtils
+        await BrowserUtils.closeBrowser();
     }
 
 }
