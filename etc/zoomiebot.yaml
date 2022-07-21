@@ -50,9 +50,6 @@ spec:
                   name: bot
                   ports:
                       - {containerPort: 8001, name: http, protocol: TCP}
-                  resources:
-                      limits: {cpu: '0.5', memory: 512Mi}
-                      requests: {cpu: '0.125', memory: 256Mi}
                   stdin: false
                   tty: false
                   workingDir: /data/project/zoomiebot/project

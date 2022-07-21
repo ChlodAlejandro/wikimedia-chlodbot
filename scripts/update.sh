@@ -22,20 +22,20 @@ GIT_HASH=`git rev-parse --short HEAD`
 
 echo Rebuilding...
 
-# Reload all Kubernetes configurations
-for file in etc/*
-do
-  kubectl apply --validate=true -f "$file"
-done
-
 # Download dependencies
 npm ci
 
 # Build both web and bot
 npm run build
 
-# Restart webservice
-webservice restart
+# Reload all Kubernetes configurations
+for file in etc/*
+do
+  kubectl apply --validate=true -f "$file"
+done
+
+# Restart Zoomiebot
+kubectl rollout restart deployment zoomiebot
 
 echo Done! Deployed commit $GIT_HASH.
 
