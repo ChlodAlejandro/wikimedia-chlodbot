@@ -46,6 +46,7 @@ export default class BrowserUtils {
 
             this.browser = await puppeteer.launch({
                 args: [
+                    "--disable-gpu",
                     "--disable-dev-shm-usage",
                     // THIS WILL DISABLE THE CHROMIUM SANDBOX.
                     // Zoomiebot MUST only ever open trusted pages (namely the English
