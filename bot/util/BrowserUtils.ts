@@ -57,9 +57,10 @@ export default class BrowserUtils {
                     // k8s containers).
                     "--no-sandbox",
                     "--disable-setuid-sandbox"
-                ]
+                ],
+                dumpio: true
             });
-            Zoomiebot.i.log.info("BrowserUtils started.");
+            Zoomiebot.i.log.info("BrowserUtils browser started.");
             this.launching = false;
         }
     }
