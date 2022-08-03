@@ -110,7 +110,9 @@ export default class BrowserUtils {
             await page.goto(targetURL.toString());
             Zoomiebot.i.log.debug(`[R:${i}] Navigated to page...`);
         } catch (e) {
-            await page.close();
+            Zoomiebot.i.log.error("Could not create screenshot.", e);
+            if (!page.isClosed())
+                await page.close();
         }
 
         let targetSelector = mode === "visual"
