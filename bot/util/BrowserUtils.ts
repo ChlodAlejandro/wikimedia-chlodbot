@@ -44,7 +44,17 @@ export default class BrowserUtils {
                 this.launching = true;
             }
 
-            this.browser = await puppeteer.launch();
+            this.browser = await puppeteer.launch({
+                // THIS WILL DISABLE THE CHROMIUM SANDBOX.
+                // Zoomiebot MUST only ever open trusted pages (namely the English
+                // Wikipedia). IF OTHER PAGES ARE ACCESSED, THERE MAY BE DANGEROUS
+                // REPERCUSSIONS!
+                //
+                // Done as a workaround to the inability to run self-built Docker
+                // containers on Toolforge (nor the lack of sudo access in Toolforge
+                // k8s containers).
+                args: [ "--no-sandbox", "--disable-setuid-sandbox" ]
+            });
             Zoomiebot.i.log.info("BrowserUtils started.");
             this.launching = false;
         }
