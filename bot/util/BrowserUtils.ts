@@ -45,15 +45,19 @@ export default class BrowserUtils {
             }
 
             this.browser = await puppeteer.launch({
-                // THIS WILL DISABLE THE CHROMIUM SANDBOX.
-                // Zoomiebot MUST only ever open trusted pages (namely the English
-                // Wikipedia). IF OTHER PAGES ARE ACCESSED, THERE MAY BE DANGEROUS
-                // REPERCUSSIONS!
-                //
-                // Done as a workaround to the inability to run self-built Docker
-                // containers on Toolforge (nor the lack of sudo access in Toolforge
-                // k8s containers).
-                args: [ "--no-sandbox", "--disable-setuid-sandbox" ]
+                args: [
+                    "--disable-dev-shm-usage",
+                    // THIS WILL DISABLE THE CHROMIUM SANDBOX.
+                    // Zoomiebot MUST only ever open trusted pages (namely the English
+                    // Wikipedia). IF OTHER PAGES ARE ACCESSED, THERE MAY BE DANGEROUS
+                    // REPERCUSSIONS!
+                    //
+                    // Done as a workaround to the inability to run self-built Docker
+                    // containers on Toolforge (nor the lack of sudo access in Toolforge
+                    // k8s containers).
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox"
+                ]
             });
             Zoomiebot.i.log.info("BrowserUtils started.");
             this.launching = false;
@@ -110,7 +114,7 @@ export default class BrowserUtils {
             await page.goto(targetURL.toString());
             Zoomiebot.i.log.debug(`[R:${i}] Navigated to page...`);
         } catch (e) {
-            Zoomiebot.i.log.error("Could not create screenshot.", e);
+            Zoomiebot.i.log.error("Could not load page.", e);
             if (!page.isClosed())
                 await page.close();
         }
@@ -122,7 +126,7 @@ export default class BrowserUtils {
         try {
             await page.waitForSelector(targetSelector, { timeout: 10000 });
         } catch (e) {
-            console.error(e);
+            Zoomiebot.i.log.error("Could not find diff element.", e);
             targetSelector = "#content";
         }
         const element = await page.$(targetSelector);
@@ -132,6 +136,7 @@ export default class BrowserUtils {
             return null;
         }
 
+        Zoomiebot.i.log.error(`[R:${i}] Taking screenshot...`);
         const screenshotImage = await element.screenshot() as Buffer;
         await page.close();
 
