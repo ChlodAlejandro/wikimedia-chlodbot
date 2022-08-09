@@ -107,6 +107,11 @@ export default class BrowserUtils {
         }
 
         const page = await this.browser.newPage();
+        page.on("request", (request) => {
+            process.stdout.write(request.method() + " " + request.url() + "\n");
+            request.continue();
+        });
+        await page.setRequestInterception( true );
         try {
             await page.setViewport({
                 width: 1366,
@@ -119,6 +124,7 @@ export default class BrowserUtils {
             Zoomiebot.i.log.error("Could not load page.", e);
             if (!page.isClosed())
                 await page.close();
+            return;
         }
 
         let targetSelector = mode === "visual"
