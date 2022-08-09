@@ -127,7 +127,7 @@ export default class BrowserUtils {
             return null;
         }
 
-        Zoomiebot.i.log.error(`[R:${i}] Taking screenshot...`);
+        Zoomiebot.i.log.debug(`[R:${i}] Taking screenshot...`);
         const screenshotImage = await element.screenshot() as Buffer;
         await page.close();
 
