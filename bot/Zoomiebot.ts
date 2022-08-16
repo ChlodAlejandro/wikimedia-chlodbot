@@ -177,7 +177,7 @@ export default class Zoomiebot {
         this.apiRouter = express.Router();
         this.apiRouter.get("/rss/recentchanges/:wikiHost", this.apiRoute(api.rss.recentchanges));
 
-        this.apiRouter.get("/renderer/diff/:wikiHost/:to", this.apiRoute(api.renderer.diff));
+        // this.apiRouter.get("/renderer/diff/:wikiHost/:to", this.apiRoute(api.renderer.diff));
 
         this.apiRouter.all("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
         this.apiRouter.all("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
@@ -192,11 +192,11 @@ export default class Zoomiebot {
 
         // Startup BrowserUtils
         (() => {
-            BrowserUtils.assertBrowser();
+            // BrowserUtils.assertBrowser();
 
-            this.intervals.push(setInterval(() => {
-                BrowserUtils.renderCache.pruneOld( 600e3 );
-            }, 5000));
+            // this.intervals.push(setInterval(() => {
+            //    BrowserUtils.renderCache.pruneOld( 600e3 );
+            // }, 5000));
         })();
     }
 
@@ -213,7 +213,7 @@ export default class Zoomiebot {
         this.intervals.forEach((v) => clearInterval(v));
 
         // Shutdown BrowserUtils
-        await BrowserUtils.closeBrowser();
+        // await BrowserUtils.closeBrowser();
     }
 
 }
