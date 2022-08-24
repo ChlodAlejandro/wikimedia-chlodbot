@@ -1,6 +1,6 @@
 {
     "name": "wikimedia-zoomiebot",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Wikipedia bot.",
     "scripts": {
         "dev:web": "npm run --workspace=web dev",
