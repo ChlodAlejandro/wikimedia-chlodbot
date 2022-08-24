@@ -8,7 +8,7 @@ import { mwn } from "mwn";
 import {USER_AGENT} from "./constants/Constants";
 import compression from "compression";
 import api from "./api";
-import BrowserUtils from "./util/BrowserUtils";
+// import BrowserUtils from "./util/BrowserUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const zoomiebotPackage = require("../package.json");
