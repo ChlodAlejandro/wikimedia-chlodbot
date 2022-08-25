@@ -29,7 +29,7 @@ npm ci
 npm run build
 
 # Reload all Kubernetes configurations
-for file in etc/*
+for file in etc/k8s/*
 do
   kubectl apply --validate=true -f "$file"
 done
