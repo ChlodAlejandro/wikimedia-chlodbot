@@ -234,7 +234,9 @@ export default (async () => {
                     if (!active) {
                         // If no longer active, deactivate template.
                         stormElement.t.params.active = undefined;
-                        stormElement.t.params["date-end"] = new Date().toISOString().substr(0, 10);
+                        stormElement.t.params["date-end"] = {
+                            wt: new Date().toISOString().substr(0, 10)
+                        };
                     }
                     stormElement.t.params["TCBs"].wt = max.toString();
                     $(stormElement.e).attr("data-mw", JSON.stringify(stormElement.mw));
