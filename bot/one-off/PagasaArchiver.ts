@@ -23,21 +23,62 @@ interface ItemMetadata {
 /**
  * Generates Internet Archive metadata for a storm.
  */
-function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
+function generateMetadata(
+    tcb : PAGASADocument, existingDescription?: string
+) : ItemMetadata {
     const [year, stormNo] = findCycloneNumber(tcb.name);
     const month = year !== new Date().getFullYear() ? 12 : (new Date()).getMonth() + 1;
-    const name = tcb.name[0].toUpperCase() + tcb.name.substr(1).toLowerCase();
+    const name = tcb.name[0].toUpperCase() + tcb.name.substring(1).toLowerCase();
+
+    const data = {
+        "Local name": name,
+        "International name": "Unnamed",
+        "JTWC designation": "TBD",
+        "Year": year,
+        "Basin": "Western Pacific Ocean",
+        "Agency": "PAGASA"
+    };
+
+    if (existingDescription) {
+        const $ = cheerio.load(existingDescription);
+        $("b[data-pagasa]").each((i, el) => {
+            const key = $(el).attr("data-pagasa");
+            const value = $(el).text();
+            if (data[key]) {
+                data[key] = value;
+            }
+        });
+    }
+
+    if (tcb.final && data["JTWC designation"] === "TBD") {
+        data["JTWC designation"] = "None";
+    }
+    if (tcb.final && data["International name"] === "Unnamed") {
+        data["International name"] = "None";
+    }
+
+    let dataString = "<p>";
+    for (const [ key, value ] of Object.entries(data)) {
+        dataString += `<div>${key}: <b data-pagasa="${key}">${value}</b></div>\n`;
+    }
+    dataString += "</p>\n";
+
+    let desc: string = dataString + fs.readFileSync(
+        path.resolve(__dirname, "..", "..", "assets", "PagasaArchiver-desc.html")
+    ).toString().trim();
+
+    if (!tcb.final) {
+        desc = fs.readFileSync(
+            path.resolve(__dirname, "..", "..", "assets", "PagasaArchiver-desc-active.html")
+        ).toString().trim() + "\n" + desc;
+    }
+
     return {
         mediatype: "texts",
         collection: ["opensource"],
         creator: "Philippine Atmospheric, Geophysical and Astronomical Services Administration",
         date: `${year}-${month < 10 ? `0${month}` : month}`,
-        description: fs.readFileSync(
-            path.resolve(__dirname, "..", "..", "assets", "PagasaArchiver-desc.html")
-        ).toString()
-            .replace(/{{{name}}}/g, name)
-            .replace(/{{{year}}}/g, `${year}`)
-            .replace(/\r?\n/g, ""),
+        description: desc.replace(/\r?\n/g, ""),
         language: "eng",
         licenseurl: "http://creativecommons.org/publicdomain/mark/1.0/",
         subject: [
@@ -46,14 +87,16 @@ function generateMetadata(tcb : PAGASADocument) : ItemMetadata {
             "tropical cyclone warning",
             "severe weather bulletin",
             "tropical cyclone advisory",
+            "tropical cyclone bulletin",
             "PAGASA",
             "Philippines",
+            "Philippine government",
             `${year} pacific typhoon season`
         ],
         title: `PAGASA Tropical Cyclone Bulletins for Tropical Cyclone ${
             name
         }, ${
-            year.toString().substr(2)
+            year.toString().substring(2)
         }-TC${
             stormNo < 10 ? `0${stormNo}` : stormNo
         }`
@@ -88,7 +131,7 @@ export default (async () => {
             }). Skipping...`);
         }
 
-        const stormIdentifier = `pagasa-${stormNumber[0].toString().substr(2)}-TC${
+        const stormIdentifier = `TEST-pagasa-${stormNumber[0].toString().substring(2)}-TC${
             stormNumber[1] < 10 ? `0${stormNumber[1]}` : stormNumber[1]
         }`;
 
@@ -137,6 +180,7 @@ export default (async () => {
                     const downloaded: AxiosResponse<Buffer> =
                         await PagasaScraper.downloadTCB(tcb.file, {responseType: "arraybuffer"});
                     log.debug("TCB downloaded from PAGASA.");
+                    log.trace("Uploading...");
                     if (!READ_ONLY)
                         await iajs.S3API.upload({
                             identifier,
@@ -156,6 +200,28 @@ export default (async () => {
                     log.info(`Uploaded new file: ${filename}`);
                 } catch (e) {
                     log.error(`Failed to download and archive bulletin: ${e.message}`, e);
+                }
+
+                // Also file for metadata update
+                if (tcb.final) {
+                    log.trace("Requesting metadata update...");
+                    const metadata = await iajs.MetadataAPI.get({ identifier, auth, path: "metadata" });
+
+                    if (!READ_ONLY) {
+                        try {
+                            await iajs.MetadataAPI.patch({ identifier, auth,
+                                target: "metadata",
+                                patch: {
+                                    op: "replace",
+                                    path: "/description",
+                                    value: generateMetadata(tcb, metadata).description
+                                }
+                            });
+                            log.debug("Metadata update requested.");
+                        } catch (e) {
+                            log.error(`Could not perform metadata update: ${e.message}`, e);
+                        }
+                    }
                 }
             }
         }
@@ -219,7 +285,7 @@ export default (async () => {
             });
 
             const matchingStorms = Object.keys(stormTCBs).filter(v => v.startsWith(`pagasa-${
-                year.toString().substr(2)
+                year.toString().substring(2)
             }`));
             for (const storm of matchingStorms) {
                 const matchingTCBs = stormTCBs[storm];
@@ -235,7 +301,7 @@ export default (async () => {
                         // If no longer active, deactivate template.
                         stormElement.t.params.active = undefined;
                         stormElement.t.params["date-end"] = {
-                            wt: new Date().toISOString().substr(0, 10)
+                            wt: new Date().toISOString().substring(0, 10)
                         };
                     }
                     stormElement.t.params["TCBs"].wt = max.toString();
@@ -243,7 +309,7 @@ export default (async () => {
                 } else {
                     const name =
                         matchingTCBs[0].name[0].toUpperCase()
-                        + matchingTCBs[0].name.substr(1).toLowerCase();
+                        + matchingTCBs[0].name.substring(1).toLowerCase();
                     const mw = {
                         parts: [{
                             template: {
@@ -259,8 +325,8 @@ export default (async () => {
                                         wt: `TC${designation}`
                                     },
                                     "local-name": { wt: name  },
-                                    "date": { wt: new Date().toISOString().substr(0, 10) },
-                                    "date-end": active ? undefined : new Date().toISOString().substr(0, 10),
+                                    "date": { wt: new Date().toISOString().substring(0, 10) },
+                                    "date-end": active ? undefined : new Date().toISOString().substring(0, 10),
                                     "TCBs": { wt: max.toString() }
                                 },
                                 i: 0
@@ -273,7 +339,7 @@ export default (async () => {
                     list.append(`<li><span typeof="mw:Transclusion" data-mw='${
                         JSON.stringify(mw)
                     }' about="N${
-                        Math.random().toString().substr(2)
+                        Math.random().toString().substring(2)
                     }"></span></li>`);
                 }
             }
