@@ -131,7 +131,7 @@ export default (async () => {
             }). Skipping...`);
         }
 
-        const stormIdentifier = `TEST-pagasa-${stormNumber[0].toString().substring(2)}-TC${
+        const stormIdentifier = `pagasa-${stormNumber[0].toString().substring(2)}-TC${
             stormNumber[1] < 10 ? `0${stormNumber[1]}` : stormNumber[1]
         }`;
 
