@@ -42,8 +42,7 @@ export default async function(req: express.Request, res: express.Response): Prom
 
     const indexPath = new URL("index.php", wikiURL.href).toString();
 
-    const bu = new BrowserUtils();
-    const diffImage = await bu.renderVisualDiff(
+    const diffImage = await BrowserUtils.renderVisualDiff(
         indexPath, +to, {
             from: !!params.from && +params.from,
             mode: params.mode === "source" ? "source" : "visual"

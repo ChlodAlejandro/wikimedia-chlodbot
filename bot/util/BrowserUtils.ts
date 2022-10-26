@@ -57,7 +57,7 @@ export default class BrowserUtils {
      * @param to The revision ID to render.
      * @param options Extra options
      */
-    async renderVisualDiff(
+    static async renderVisualDiff(
         wikiIndex: string,
         to: number,
         options: { from?: number, mode?: "visual" | "source" } = {}
@@ -101,7 +101,7 @@ export default class BrowserUtils {
                     "return document.querySelector(arguments[0]) != null",
                     targetSelector
                 );
-            }, 10e3);
+            }, 20e3);
         } catch (e) {
             Zoomiebot.i.log.error("Could not find diff element.", e);
             targetSelector = "#content";
