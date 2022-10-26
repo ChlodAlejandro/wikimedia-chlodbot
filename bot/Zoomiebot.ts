@@ -177,7 +177,7 @@ export default class Zoomiebot {
         this.apiRouter = express.Router();
         this.apiRouter.get("/rss/recentchanges/:wikiHost", this.apiRoute(api.rss.recentchanges));
 
-        // this.apiRouter.get("/renderer/diff/:wikiHost/:to", this.apiRoute(api.renderer.diff));
+        this.apiRouter.get("/renderer/diff/:wikiHost/:to", this.apiRoute(api.renderer.diff));
 
         this.apiRouter.all("/deputy/revisions/:wiki", this.apiRoute(api.deputy.latest.revisions));
         this.apiRouter.all("/deputy/v1/revisions/:wiki", this.apiRoute(api.deputy.v1.revisions));
@@ -186,18 +186,6 @@ export default class Zoomiebot {
         this.server = this.app.listen(process.env.PORT ?? 8001, () => {
             this.log.info(`Server started on port ${process.env.PORT ?? 8001}.`);
         });
-
-        // Do some post-startup activities that can take a while.
-        // Wrapped in a closure to prevent the "missing await for async" warning.
-
-        // Startup BrowserUtils
-        (() => {
-            // BrowserUtils.assertBrowser();
-
-            // this.intervals.push(setInterval(() => {
-            //    BrowserUtils.renderCache.pruneOld( 600e3 );
-            // }, 5000));
-        })();
     }
 
     /**

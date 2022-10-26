@@ -40,8 +40,7 @@ spec:
                   ports:
                       - {containerPort: 8000, name: http, protocol: TCP}
                   resources:
-                      limits: {cpu: '0.5', memory: 512Mi}
-                      requests: {cpu: '0.125', memory: 256Mi}
+                      requests: {cpu: '0.125', memory: 3Gi}
                   stdin: false
                   tty: false
                   workingDir: /data/project/zoomiebot/
