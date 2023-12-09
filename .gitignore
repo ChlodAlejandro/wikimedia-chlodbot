@@ -11,3 +11,6 @@ vendor
 build
 web/public/scripts/auto
 web/public/system/logs
+
+# Secrets
+.env
