@@ -58,4 +58,4 @@ jobs:
             -   name: Pull latest commit
                 run: ssh dev.toolforge.org \
                     become zoomiebot \
-                    bash /data/project/zoomiebot/project/scripts/update.sh
+                    bash -c "curl https://github.com/ChlodAlejandro/zoomiebot/raw/master/scripts/update.sh | bash -"

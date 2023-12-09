@@ -15,6 +15,7 @@ metadata:
         app.kubernetes.io/managed-by: webservice
         name: zoomiebot
         toolforge: tool
+        toolforge.org/mount-storage: all
     name: zoomiebot
     namespace: tool-zoomiebot
 spec:
@@ -22,21 +23,23 @@ spec:
     selector:
         matchLabels:
             app.kubernetes.io/component: web
-            app.kubernetes.io/managed-by: webservice
             name: zoomiebot
             toolforge: tool
     template:
         metadata:
             labels:
                 app.kubernetes.io/component: web
-                app.kubernetes.io/managed-by: webservice
                 name: zoomiebot
                 toolforge: tool
+                toolforge.org/mount-storage: all
         spec:
             containers:
-                - command: [/usr/bin/webservice-runner, --type, lighttpd, --port, '8000']
-                  image: docker-registry.tools.wmflabs.org/toolforge-php73-sssd-web:latest
+                - command: [ '/cnb/process/web' ]
+                  image: tools-harbor.wmcloud.org/tool-zoomiebot/tool-zoomiebot:latest
                   name: webservice
+                  env:
+                      - {name: PORT, value: '8000'}
+                      - {name: PUPPETEER_CHROME_PATH, value: '/layers/fagiani_apt/apt/usr/bin/chromium-browser'}
                   ports:
                       - {containerPort: 8000, name: http, protocol: TCP}
                   resources:
@@ -44,9 +47,12 @@ spec:
                   stdin: false
                   tty: false
                   workingDir: /data/project/zoomiebot/
-                - command: [/usr/bin/bash, "-c", "source $HOME/.profile && npm run start"]
-                  image: docker-registry.tools.wmflabs.org/toolforge-bullseye-sssd:latest
+                - command: [ '/cnb/process/bot' ]
+                  image: tools-harbor.wmcloud.org/tool-zoomiebot/tool-zoomiebot:latest
                   name: bot
+                  env:
+                      - {name: PORT, value: '8001'}
+                      - {name: PUPPETEER_CHROME_PATH, value: '/layers/fagiani_apt/apt/usr/bin/chromium-browser'}
                   ports:
                       - {containerPort: 8001, name: http, protocol: TCP}
                   resources:

@@ -1,0 +1,10 @@
+- name: wptc-index
+  image: tool-zoomiebot/tool-zoomiebot
+  command: job-wptc-index
+  schedule: "0 * * * *"
+  mem: 500Mi
+- name: pagasa-archiver
+  image: tool-zoomiebot/tool-zoomiebot
+  command: job-pagasa-archiver
+  schedule: "*/10 * * * *"
+  mem: 500Mi

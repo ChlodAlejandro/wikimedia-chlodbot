@@ -1,3 +1,0 @@
-backend: kubernetes
-version: 4
-web: php7.4

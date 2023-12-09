@@ -1,6 +1,6 @@
 import Zoomiebot from "../Zoomiebot";
 import ZoomiebotCache from "./ZoomiebotCache";
-import puppeteer, {Browser} from "puppeteer";
+import puppeteer, {Browser} from "puppeteer-core";
 
 /**
  * Utilities for doing things with a browser. Helps with rendering HTML, among other things.
@@ -22,6 +22,7 @@ export default class BrowserUtils {
     static async getBrowser(): Promise<Browser> {
         if (!this.browserCache) {
             this.browserCache = await puppeteer.launch({
+                executablePath: process.env.PUPPETEER_CHROME_PATH,
                 defaultViewport: {
                     width: 1920,
                     height: 1080

@@ -9,9 +9,9 @@
         "build:bot": "tsc",
         "test": "jest --detectOpenHandles",
         "start": "node -r ts-node/register bot/Zoomiebot.ts",
-        "run:test-task": "node -r ts-node/register bot/one-off/TestTask.ts",
-        "run:wptc-index": "node -r ts-node/register bot/one-off/WPTCIndex.ts",
-        "run:pagasa-archiver": "node -r ts-node/register bot/one-off/PagasaArchiver.ts",
+        "job:test-task": "node -r ts-node/register bot/one-off/TestTask.ts",
+        "job:wptc-index": "node -r ts-node/register bot/one-off/WPTCIndex.ts",
+        "job:pagasa-archiver": "node -r ts-node/register bot/one-off/PagasaArchiver.ts",
         "version": "cross-env-shell \"npm version $npm_package_version --no-git-tag-version --workspaces\" && git add **/package*.json"
     },
     "workspaces": [
@@ -67,7 +67,7 @@
         "mysql2": "^2.3.3-rc.0",
         "pagasa-archiver": "^1.3.1",
         "pretty": "^2.0.0",
-        "puppeteer": "^22.5.0",
+        "puppeteer-core": "^22.5.0",
         "turndown": "^7.1.1"
     }
 }

@@ -1,0 +1,16 @@
+# IDEs
+.idea
+.vscode
+
+# Dependencies
+node_modules
+vendor
+
+# Built data
+.logs
+build
+web/public/scripts/auto
+web/public/system/logs
+
+# Secrets
+.env

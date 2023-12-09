@@ -1,0 +1,6 @@
+# Toss requests on /bot to the bot server
+RewriteEngine On
+RewriteRule "^bot(?:/(.*)|$)" "http://localhost:8001/$1" [P,L]
+
+# Discord Video Embed
+RewriteRule "^dve(/|$)" "/dve.php" [L]
