@@ -1,4 +1,4 @@
-# Adapted from https://gitlab.wikimedia.org/repos/cloud/toolforge/tools-webservice/-/blob/main/toolsws/backends/kubernetes.py
+# Adapted from https://phabricator.wikimedia.org/diffusion/OSTW/browse/master/toolsws/backends/kubernetes.py
 # Run with python3 -Es ~/project/scripts/k8s_ingest_start.py
 
 from toolsws.tool import Tool
