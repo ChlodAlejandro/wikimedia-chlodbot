@@ -129,6 +129,7 @@ export default (async () => {
             log.debug(`Detected storm does not have a valid name (${
                 tcb.name
             }). Skipping...`);
+            continue;
         }
 
         const stormIdentifier = `pagasa-${stormNumber[0].toString().substring(2)}-TC${
@@ -148,6 +149,7 @@ export default (async () => {
         log.info("No documents to archive.");
         log.info("Done.");
         await OneOffTask.destroy(log, bot);
+        process.exit(0);
     }
 
     const auth = await iajs.Auth.fromS3(process.env.IA_S3_ACCESS_KEY, process.env.IA_S3_SECRET_KEY);
@@ -297,7 +299,7 @@ export default (async () => {
                 const active = !matchingTCBs.some(tcb => tcb.final);
 
                 if (stormElement != null) {
-                    if (!active) {
+                    if (!active && stormElement.t.params["active"] != null) {
                         // If no longer active, deactivate template.
                         stormElement.t.params.active = undefined;
                         stormElement.t.params["date-end"] = {
