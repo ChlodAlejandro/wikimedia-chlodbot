@@ -1,6 +1,6 @@
 import {Builder, By, WebDriver} from "selenium-webdriver";
-import chrome from "selenium-webdriver/chrome";
-import firefox from "selenium-webdriver/firefox";
+import * as chrome from "selenium-webdriver/chrome";
+import * as firefox from "selenium-webdriver/firefox";
 import Zoomiebot from "../Zoomiebot";
 import ZoomiebotCache from "./ZoomiebotCache";
 import Pool from "./Pool";
@@ -18,13 +18,13 @@ class DriverSet extends Pool<WebDriver> {
         const size = { width: 1920, height: 1080 };
 
         const chromeOpts = new chrome.Options()
-            .windowSize( size );
+            .windowSize( size ) as chrome.Options;
         const firefoxOpts = new firefox.Options()
             .windowSize( size );
 
         if ( ![ "0", "false", "no", "" ].includes( process.env.HEADLESS?.toLowerCase() ) ) {
-            chromeOpts.headless();
-            firefoxOpts.headless();
+            chromeOpts.addArguments( "--headless=new" );
+            firefoxOpts.addArguments( "--headless" );
         }
 
         return new Builder()
