@@ -1,6 +1,40 @@
+import {Builder, By, WebDriver} from "selenium-webdriver";
+import chrome from "selenium-webdriver/chrome";
+import firefox from "selenium-webdriver/firefox";
 import Zoomiebot from "../Zoomiebot";
 import ZoomiebotCache from "./ZoomiebotCache";
-import puppeteer, {Browser} from "puppeteer";
+import Pool from "./Pool";
+
+/**
+ *
+ */
+class DriverSet extends Pool<WebDriver> {
+
+    /**
+     *
+     */
+    create(): Promise<WebDriver> | WebDriver {
+        const browser = ( process.env.BROWSER || "firefox" ).toLowerCase();
+        const size = { width: 1920, height: 1080 };
+
+        const chromeOpts = new chrome.Options()
+            .windowSize( size );
+        const firefoxOpts = new firefox.Options()
+            .windowSize( size );
+
+        if ( ![ "0", "false", "no", "" ].includes( process.env.HEADLESS?.toLowerCase() ) ) {
+            chromeOpts.headless();
+            firefoxOpts.headless();
+        }
+
+        return new Builder()
+            .setChromeOptions( chromeOpts )
+            .setFirefoxOptions( firefoxOpts )
+            .forBrowser( browser )
+            .build();
+    }
+
+}
 
 /**
  * Utilities for doing things with a browser. Helps with rendering HTML, among other things.
@@ -14,23 +48,7 @@ export default class BrowserUtils {
     /**
      *
      */
-    static browserCache: Browser;
-
-    /**
-     *
-     */
-    static async getBrowser(): Promise<Browser> {
-        if (!this.browserCache) {
-            this.browserCache = await puppeteer.launch({
-                defaultViewport: {
-                    width: 1920,
-                    height: 1080
-                }
-            });
-        }
-
-        return this.browserCache;
-    }
+    static browserCache: DriverSet = new DriverSet();
 
     /**
      * Renders a diff given some settings
@@ -44,8 +62,6 @@ export default class BrowserUtils {
         to: number,
         options: { from?: number, mode?: "visual" | "source" } = {}
     ): Promise<Buffer> {
-        await this.getBrowser();
-
         const i = Math.random().toString().substring(2, 8);
 
         const targetURL = new URL(wikiIndex);
@@ -66,9 +82,9 @@ export default class BrowserUtils {
             Zoomiebot.i.log.debug(`[R:${i}] Rendering diff: ${targetURL.toString()}`);
         }
 
-        const page = await (await this.getBrowser()).newPage();
+        const browser = await BrowserUtils.browserCache.getFree();
         try {
-            await page.goto(targetURL.toString());
+            await browser.navigate().to(targetURL.toString());
             Zoomiebot.i.log.debug(`[R:${i}] Navigated to page...`);
         } catch (e) {
             Zoomiebot.i.log.error("Could not load page.", e);
@@ -80,18 +96,19 @@ export default class BrowserUtils {
             : "table.diff";
 
         try {
-            await page.waitForFunction(
-                (_targetSelector) => {
-                    return document.querySelector(_targetSelector) != null;
-                },
-                {timeout: 20e3},
-                targetSelector
-            );
+            await browser.wait(() => {
+                return browser.executeScript(
+                    "return document.querySelector(arguments[0]) != null",
+                    targetSelector
+                );
+            }, 20e3);
         } catch (e) {
             Zoomiebot.i.log.error("Could not find diff element.", e);
             targetSelector = "#content";
         }
-        const element = await page.$(targetSelector);
+        const element = await browser.findElement(By.js(
+            `return document.querySelector("${targetSelector}")`
+        ));
 
         // Element still not found. Give up.
         if (element == null) {
@@ -100,9 +117,9 @@ export default class BrowserUtils {
 
         Zoomiebot.i.log.debug(`[R:${i}] Taking screenshot...`);
         const screenshotImage = Buffer.from(
-            await element.screenshot({ type: "png", encoding: "base64" }), "base64"
+            await element.takeScreenshot(true), "base64"
         );
-        await page.close();
+        BrowserUtils.browserCache.setFree( browser );
 
         Zoomiebot.i.log.debug(`[R:${i}] Rendered!`);
         BrowserUtils.renderCache.put(cacheKey, screenshotImage);
