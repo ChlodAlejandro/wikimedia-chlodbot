@@ -142,6 +142,7 @@ export default (async () => {
         }
         log.debug(`Found TCB #${tcb.count} for ${stormIdentifier}.`);
         stormTCBs[stormIdentifier].push(tcb);
+        stormTCBs[stormIdentifier].sort((a, b) => a.count - b.count);
         years.add(stormNumber[0]);
     }
 
@@ -179,7 +180,8 @@ export default (async () => {
             } else {
                 // Not yet uploaded.
                 try {
-                    const downloaded: AxiosResponse<Buffer> =
+                    log.info(`Downloading ${tcb.file}...`);
+                    const downloaded =
                         await PagasaScraper.downloadTCB(tcb.file, {responseType: "arraybuffer"});
                     log.debug("TCB downloaded from PAGASA.");
                     log.trace("Uploading...");
