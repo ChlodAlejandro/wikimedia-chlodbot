@@ -35,7 +35,7 @@ export default class OneOffTask {
 
         const log = Logger.createLogger({
             name: taskName,
-            level: process.env.NODE_ENV === "development" ? 10 : 30,
+            level: process.env.NODE_ENV === "development" ? 0 : 30,
             stream: process.env.ZOOMIE_RAWLOG ? process.stdout : bunyanFormat({
                 outputMode: "long",
                 levelInString: true
