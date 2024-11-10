@@ -12,7 +12,9 @@
 
         /* Experimental Options */
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+
+        "skipLibCheck": true
     },
     "include": [
         "./bot/**/*",
