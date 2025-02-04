@@ -75,7 +75,7 @@ function generateMetadata(
 
     return {
         mediatype: "texts",
-        collection: ["opensource"],
+        collection: ["pagasa-bulletins"],
         creator: "Philippine Atmospheric, Geophysical and Astronomical Services Administration",
         date: `${year}-${month < 10 ? `0${month}` : month}`,
         description: desc.replace(/\r?\n/g, ""),
